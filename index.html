@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Разбор обратной связи по КП · DAPI TEAM</title>
+<style>
+  :root {
+    --bg: #F5F5F7;
+    --panel: #FFFFFF;
+    --panel-2: #FAFAFB;
+    --border: #E3E3E8;
+    --text: #1D1D1F;
+    --text-dim: #6E6E73;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+    --yellow: #FEBC2E;
+    --green: #28C840;
+    --green-ink: #1B7F34;
+    --green-bg: #EAF8EE;
+    --blue: #0071E3;
+    --blue-bg: #EDF4FE;
+    --red: #FF5F57;
+    --amber-ink: #8A5300;
+    --amber-bg: #FFF5E1;
+    --amber-line: #F2B544;
+    --shadow: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px -14px rgba(0,0,0,.12);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  .page { max-width: 980px; margin: 0 auto; padding: 1.6rem 1.25rem 4rem; }
+
+  /* top bar */
+  .topnav { position: sticky; top: 0; z-index: 10; background: rgba(245,245,247,.88); backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px); border-bottom: 1px solid var(--border); }
+  .topnav-in { max-width: 980px; margin: 0 auto; padding: 0.55rem 1.25rem; display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+  .logo { font-family: var(--mono); font-weight: 700; letter-spacing: 0.14em; font-size: 0.8rem; white-space: nowrap; }
+  .chips-nav { display: flex; gap: 0.3rem; flex-wrap: wrap; flex: 1; }
+  .nav-chip { font-family: var(--mono); font-size: 0.74rem; padding: 0.22rem 0.5rem; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text-dim); text-decoration: none; }
+  .nav-chip:hover { border-color: var(--text-dim); color: var(--text); }
+  .nav-chip[data-status="discussed"] { background: var(--blue-bg); border-color: #B8D4FA; color: var(--blue); }
+  .nav-chip[data-status="agreed"] { background: var(--green-bg); border-color: #A9E3B8; color: var(--green-ink); }
+  .nav-chip.final { color: var(--text); font-weight: 600; }
+  .prog { font-family: var(--mono); font-size: 0.74rem; color: var(--text-dim); white-space: nowrap; }
+  .saved { font-family: var(--mono); font-size: 0.7rem; color: var(--green-ink); opacity: 0; transition: opacity .3s; }
+  .saved.on { opacity: 1; }
+
+  /* brandbar */
+  .brandbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.9rem 1.25rem;
+    border: 1px solid var(--border); border-radius: 12px; background: var(--panel); margin: 1.2rem 0 2rem;
+    font-family: var(--mono); font-size: 0.82rem; box-shadow: var(--shadow); }
+  .brandbar .logo { font-size: 0.85rem; }
+  .brandbar-tag { color: var(--text-dim); border: 1px dashed var(--border); border-radius: 8px; padding: 0.2rem 0.6rem; }
+  .brandbar-meta { color: var(--text-dim); }
+
+  /* hero */
+  .hero { padding: 0 0.25rem 1.8rem; }
+  .hero h1 { font-size: 2.4rem; line-height: 1.12; margin: 0 0 1rem; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance; }
+  .hero p { font-size: 1.08rem; color: var(--text-dim); max-width: 700px; margin: 0 0 1rem; }
+  .hero p b { color: var(--text); font-weight: 600; }
+  .howto { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); display: flex; gap: 0.6rem 1.4rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .howto span::before { content: "› "; color: var(--blue); }
+
+  /* block card */
+  .block { border: 1px solid var(--border); border-radius: 14px; background: var(--panel); margin: 0 0 1.8rem; overflow: hidden;
+    box-shadow: var(--shadow); scroll-margin-top: 70px; border-left-width: 4px; }
+  .block[data-status="discussed"] { border-left-color: var(--blue); }
+  .block[data-status="agreed"] { border-left-color: var(--green); }
+  .card-title { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 1.1rem; background: var(--panel-2);
+    border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim); }
+  .dots { display: flex; gap: 0.4rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: var(--red); } .dot.y { background: var(--yellow); } .dot.g { background: var(--green); }
+  .card-title .st-label { margin-left: auto; font-size: 0.72rem; }
+  .block[data-status="discussed"] .st-label { color: var(--blue); }
+  .block[data-status="agreed"] .st-label { color: var(--green-ink); }
+  .block-body { padding: 1.6rem 1.7rem 1.7rem; }
+
+  .block-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+  .block-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; color: var(--blue); line-height: 1; }
+  .block-head h2 { font-size: 1.6rem; line-height: 1.2; margin: 0; letter-spacing: -0.015em; text-wrap: balance; }
+  .tag { font-family: var(--mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 999px; white-space: nowrap; }
+  .tag.amber { background: var(--amber-bg); color: var(--amber-ink); border: 1px solid var(--amber-line); }
+  .tag.blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #B8D4FA; }
+
+  /* sections */
+  .sec { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  .sec:first-of-type { border-top: 0; padding-top: 0; }
+  .sec-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 600; margin-bottom: 0.6rem; }
+  .sec p { margin: 0 0 0.7rem; }
+  .sec p:last-child { margin-bottom: 0; }
+  .sec ul { margin: 0.2rem 0 0.7rem; padding-left: 1.2rem; }
+  .sec li { margin: 0.15rem 0; }
+  .sec h4 { font-size: 1rem; margin: 1rem 0 0.4rem; }
+  .quote { font-size: 1.12rem; font-weight: 600; line-height: 1.45; }
+  .dim { color: var(--text-dim); }
+  .strong-line { font-weight: 600; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin: 0.5rem 0 0.8rem; }
+  .flow span { font-size: 0.92rem; font-weight: 600; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.3rem 0.65rem; }
+  .flow i { font-style: normal; color: var(--blue); font-weight: 700; }
+
+  .chips { list-style: none; padding: 0 !important; margin: 0.4rem 0 0.8rem !important; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .chips li { margin: 0 !important; font-size: 0.88rem; border: 1px solid var(--border); border-radius: 999px; padding: 0.28rem 0.75rem; background: var(--panel); }
+
+  .callout { border-radius: 10px; padding: 1rem 1.15rem; margin: 0.8rem 0; border: 1px solid var(--border); }
+  .callout.amber { background: var(--amber-bg); border-color: var(--amber-line); border-left: 4px solid var(--amber-line); }
+  .callout.blue { background: var(--blue-bg); border-color: #B8D4FA; border-left: 4px solid var(--blue); }
+  .callout-tag { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .callout.amber .callout-tag { color: var(--amber-ink); }
+  .callout.blue .callout-tag { color: var(--blue); }
+  .big { font-size: 1.25rem; font-weight: 700; }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.6rem 0 0.9rem; }
+  .opt { border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; background: var(--panel-2); position: relative; }
+  .opt.pref { border: 2px solid var(--blue); background: var(--panel); }
+  .opt-num { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .opt h4 { margin: 0.3rem 0 0.5rem; font-size: 1.02rem; }
+  .opt ul { margin: 0; font-size: 0.92rem; }
+  .opt .pref-mark { position: absolute; top: 0.8rem; right: 0.9rem; font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue); }
+
+  .ask { list-style: none; padding: 0 !important; margin: 0 !important; }
+  .ask li { position: relative; padding: 0.45rem 0 0.45rem 1.7rem; border-bottom: 1px dashed var(--border); margin: 0 !important; }
+  .ask li:last-child { border-bottom: 0; }
+  .ask li::before { content: "?"; position: absolute; left: 0; top: 0.5rem; width: 1.15rem; height: 1.15rem; border-radius: 50%;
+    background: var(--blue-bg); color: var(--blue); font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; }
+
+  .agree { list-style: none; padding: 0 !important; margin: 0.3rem 0 0.8rem !important; }
+  .agree li { padding: 0.3rem 0 0.3rem 1.6rem; position: relative; margin: 0 !important; }
+  .agree li::before { content: "✓"; position: absolute; left: 0.1rem; color: var(--green-ink); font-weight: 700; }
+
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.5rem 0 0.8rem; }
+  .tier { border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; background: var(--panel-2); }
+  .tier b { display: block; font-family: var(--mono); color: var(--blue); font-size: 1.05rem; margin-bottom: 0.25rem; }
+
+  /* scenario table */
+  .table-wrap { overflow-x: auto; margin: 0.6rem 0 0.4rem; border: 1px solid var(--border); border-radius: 10px; }
+  table.scn { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 0.9rem; }
+  table.scn th { text-align: left; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 600; background: var(--panel-2); padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--border); }
+  table.scn td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  table.scn tr:last-child td { border-bottom: 0; }
+  table.scn td:first-child { font-weight: 600; width: 38%; }
+  table.scn input { width: 100%; font: inherit; font-size: 0.88rem; border: 1px solid transparent; border-radius: 6px; padding: 0.35rem 0.45rem; background: var(--panel-2); color: var(--text); }
+  table.scn input:hover { border-color: var(--border); }
+  table.scn input:focus { outline: none; border-color: var(--blue); background: #fff; }
+
+  .counts { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.8rem 0 0.2rem; }
+  .counts label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.35rem 0.4rem 0.35rem 0.75rem; background: var(--panel-2); }
+  .counts input { width: 4.2rem; font: inherit; font-family: var(--mono); text-align: center; border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem; background: #fff; }
+  .counts input:focus { outline: none; border-color: var(--blue); }
+
+  /* notes */
+  .notes textarea, .final-field textarea {
+    width: 100%; display: block; font: inherit; font-size: 0.96rem; color: var(--text);
+    line-height: 1.9rem; padding: 0.1rem 0.9rem 0.3rem; min-height: calc(1.9rem * 5 + 0.5rem);
+    border: 1px dashed #CFCFD6; border-radius: 8px; resize: vertical; overflow: hidden;
+    background-color: #FFFFFF;
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.9rem - 1px), #ECECF0 calc(1.9rem - 1px), #ECECF0 1.9rem);
+    background-position: 0 0.1rem; background-attachment: local;
+  }
+  .notes textarea:focus, .final-field textarea:focus { outline: none; border-style: solid; border-color: var(--blue); }
+
+  /* status */
+  .status-row { display: flex; align-items: center; gap: 0.6rem 1rem; flex-wrap: wrap; padding-top: 1.1rem; margin-top: 0.4rem; border-top: 1px solid var(--border); }
+  .status-row .sec-label { margin: 0; }
+  .status { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .st { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.4rem 0.8rem 0.4rem 0.6rem; font-size: 0.92rem; background: var(--panel); user-select: none; }
+  .st input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .st .box { width: 1.05rem; height: 1.05rem; border: 1.5px solid #B9B9C2; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: #fff; flex: none; }
+  .st:has(input:checked) { border-color: var(--text); }
+  .st input:checked + .box { background: var(--text); border-color: var(--text); }
+  .st input:checked + .box::after { content: "✓"; }
+  .st.s-discussed:has(input:checked) { border-color: var(--blue); background: var(--blue-bg); }
+  .st.s-discussed input:checked + .box { background: var(--blue); border-color: var(--blue); }
+  .st.s-agreed:has(input:checked) { border-color: var(--green); background: var(--green-bg); }
+  .st.s-agreed input:checked + .box { background: var(--green); border-color: var(--green); }
+  .st input:focus-visible + .box { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* final block */
+  .final { border: 2px solid var(--text); }
+  .final .block-num { color: var(--text); }
+  .final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 1.4rem; }
+  .final-field.wide { grid-column: 1 / -1; }
+  .final-field label { display: block; font-weight: 700; margin-bottom: 0.4rem; }
+  .final-field label span { display: block; font-weight: 400; font-size: 0.85rem; color: var(--text-dim); }
+  .final-sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 600; margin: 0 0 0.8rem; }
+
+  /* results board */
+  .result { margin: 0 0 2rem; }
+  .result-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin-bottom: 1rem; }
+  .tile { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; background: var(--panel-2); }
+  .tile b { display: block; font-family: var(--mono); font-size: 1.9rem; line-height: 1.1; }
+  .tile span { font-size: 0.85rem; color: var(--text-dim); }
+  .tile.t-agreed { background: var(--green-bg); border-color: #A9E3B8; }
+  .tile.t-agreed b { color: var(--green-ink); }
+  .tile.t-discussed { background: var(--blue-bg); border-color: #B8D4FA; }
+  .tile.t-discussed b { color: var(--blue); }
+  .tile.t-empty b { color: var(--text-dim); }
+  .rl { border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 0.8rem; background: var(--panel); }
+  .rl-agreed { border-left: 4px solid var(--green); }
+  .rl-discussed { border-left: 4px solid var(--blue); }
+  .rl-head { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 0.55rem; }
+  .rl-agreed .rl-head { color: var(--green-ink); }
+  .rl-discussed .rl-head { color: var(--blue); }
+  .rl-rest .rl-head { color: var(--text-dim); }
+  .rl ul { list-style: none; margin: 0; padding: 0; }
+  .rl li { padding: 0.5rem 0; border-top: 1px dashed var(--border); }
+  .rl li:first-child { border-top: 0; padding-top: 0; }
+  .rl li:last-child { padding-bottom: 0; }
+  .rl a { color: var(--text); text-decoration: none; font-weight: 600; }
+  .rl a:hover { text-decoration: underline; }
+  .rl-num { font-family: var(--mono); color: var(--text-dim); font-weight: 500; margin-right: 0.45rem; }
+  .rl-note { margin: 0.3rem 0 0; font-size: 0.92rem; color: var(--text-dim); white-space: pre-wrap; }
+  .rl-empty { margin: 0; font-size: 0.92rem; color: var(--text-dim); }
+  .rl-rest-list { margin: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; font-size: 0.9rem; }
+  .rl-rest-list a { font-weight: 500; color: var(--text-dim); }
+  .btn[disabled] { opacity: .6; cursor: progress; }
+  .actions { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; margin-top: 1.6rem; padding-top: 1.3rem; border-top: 1px solid var(--border); }
+  .btn { font: inherit; font-size: 0.95rem; font-weight: 600; border-radius: 10px; padding: 0.75rem 1.2rem; cursor: pointer; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn.primary:hover { background: #0062C4; }
+  .btn:hover { border-color: var(--text-dim); }
+  .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .btn.ghost { margin-left: auto; font-size: 0.82rem; font-weight: 500; color: var(--text-dim); padding: 0.55rem 0.9rem; }
+  .actions-note { width: 100%; font-size: 0.82rem; color: var(--text-dim); margin: 0; }
+
+  .footer { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--border);
+    padding-top: 1.2rem; margin-top: 1rem; font-family: var(--mono); font-size: 0.76rem; color: var(--text-dim); }
+
+  @media (max-width: 720px) {
+    .options, .tiers, .final-grid { grid-template-columns: 1fr; }
+    .result-tiles { grid-template-columns: 1fr 1fr; }
+    .topnav-in { gap: 0.45rem 0.8rem; }
+    .chips-nav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .chips-nav::-webkit-scrollbar { display: none; }
+    .nav-chip { flex: none; }
+    .prog { margin-left: auto; }
+    .hero h1 { font-size: 1.8rem; }
+    .block-body { padding: 1.2rem 1.1rem 1.3rem; }
+    .btn.ghost { margin-left: 0; }
+  }
+
+  @media print {
+    body { background: #fff; font-size: 13px; }
+    .topnav, .actions, .howto { display: none !important; }
+    .page { padding: 0; max-width: none; }
+    .block { box-shadow: none; break-inside: auto; }
+    .sec, .status-row, .callout, .opt { break-inside: avoid; }
+    textarea { border-style: solid !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav" aria-label="Навигация по блокам">
+  <div class="topnav-in">
+    <div class="logo">DAPI TEAM</div>
+    <div class="chips-nav">
+      <a class="nav-chip" href="#b1" title="Архитектура GGroup и Т.Парка">01</a>
+      <a class="nav-chip" href="#b2" title="Owner Dashboard / управленческий экран">02</a>
+      <a class="nav-chip" href="#b3" title="17 000+ лидов, контакты и компании">03</a>
+      <a class="nav-chip" href="#b4" title="Автоматизация">04</a>
+      <a class="nav-chip" href="#b5" title="Маркетинг и источники">05</a>
+      <a class="nav-chip" href="#b6" title="Документы">06</a>
+      <a class="nav-chip" href="#b7" title="Контакты и отношения">07</a>
+      <a class="nav-chip" href="#b8" title="Backup / AS-IS">08</a>
+      <a class="nav-chip" href="#b9" title="Приемка">09</a>
+      <a class="nav-chip" href="#b10" title="Обучение и стабилизация">10</a>
+      <a class="nav-chip" href="#b11" title="Границы первого этапа">11</a>
+      <a class="nav-chip final" href="#final">Итоги ↓</a>
+    </div>
+    <span class="saved" id="saved">сохранено</span>
+    <span class="prog" id="prog">Согласовали 0 из 11</span>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="brandbar">
+    <div class="logo">DAPI TEAM</div>
+    <div class="brandbar-tag">разбор обратной связи по КП</div>
+    <div class="brandbar-meta">GGroup · Bitrix24 · сентябрь 2026</div>
+  </div>
+
+  <div class="hero">
+    <h1>Встреча с Евгением: обратная связь по КП на внедрение Bitrix24</h1>
+    <p>Моя задача на встрече — <b>спокойно пройтись по всем замечаниям</b>, убедиться, что мы одинаково понимаем задачу, зафиксировать договоренности и <b>только после этого</b> определить окончательный объем работ.</p>
+    <p>Сначала синхронизирую понимание, потом фиксирую объем.</p>
+    <div class="howto">
+      <span>статусы и заметки сохраняются в этом браузере автоматически</span>
+      <span>в конце — что согласовали, итог встречи и выгрузка в PDF</span>
+    </div>
+  </div>
+
+  <!-- ===================== 01 ===================== -->
+  <section class="block" id="b1" data-num="1" data-title="Архитектура GGroup и Т.Парка">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 01_архитектура.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">01</span>
+        <h2>Архитектура GGroup и Т.Парка</h2>
+        <span class="tag amber">Т.Парк — возможен рост объема</span>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Недостаточно просто привести в порядок существующую CRM. Сначала нужно определить целевую архитектуру холдинга:</p>
+        <ul>
+          <li>какие направления бизнеса будут иметь отдельные воронки;</li>
+          <li>какие компании и сущности будут общими;</li>
+          <li>как будет организована работа с единой базой компаний и контактов;</li>
+          <li>как CRM должна выглядеть в перспективе, чтобы через 6–12 месяцев ее не пришлось переделывать.</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Внутри Bitrix24 GGroup есть несколько компаний и направлений. Прежде чем менять текущую CRM, мне нужно сначала показать блок-схему будущей структуры и вместе с Евгением ее обсудить и согласовать.</p>
+        <p class="strong-line">То есть сначала определить логику бизнеса и взаимосвязей, а уже потом на ее основе перестраивать CRM.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция</div>
+        <div class="callout amber">
+          <div class="callout-tag">Т.Парк · потенциальное увеличение объема</div>
+          <p>Я понимаю, что Т.Парк тоже нужно учитывать в общей архитектуре холдинга. Но для меня это отдельная ветка и дополнительный объем работы.</p>
+          <p><b>Ключевой момент:</b> если Т.Парк нужно привести к аналогичной структуре, как GGroup, чтобы потом синхронизировать данные в едином управленческом дашборде собственника, объем работы существенно увеличивается.</p>
+          <p class="big">Ориентировочно — минимум в 1,3–1,5 раза</p>
+          <p>В первую очередь из-за дополнительного времени на:</p>
+          <ul class="chips">
+            <li>анализ второй системы</li>
+            <li>настройку</li>
+            <li>подготовку инструкций</li>
+            <li>обучение сотрудников</li>
+          </ul>
+          <p><b>Обучение и инструкции — один из самых трудозатратных блоков по времени.</b></p>
+          <p>Поэтому здесь нужно не просто зафиксировать «учитываем Т.Парк», а определить глубину работы с ним.</p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Нужно ли по Т.Парку делать полноценную аналогичную работу или достаточно учитывать его как отдельный источник данных?</li>
+          <li>Если работа по Т.Парку аналогична GGroup — какой объем реально нужен на первом этапе?</li>
+          <li>Что именно должно попадать из Т.Парка в общую управленческую картину?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n1">Открытые комментарии</label></div>
+        <textarea id="n1" data-save placeholder=""></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 01">
+          <label class="st s-none"><input type="checkbox" id="st1-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st1-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st1-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 ===================== -->
+  <section class="block" id="b2" data-num="2" data-title="Owner Dashboard / управленческий экран">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 02_дашборд_собственника.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">02</span>
+        <h2>Owner Dashboard / управленческий экран</h2>
+        <span class="tag blue">Отдельный управленческий слой</span>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Нужен не просто общий руководительский дашборд, а экран, который отвечает на вопросы:</p>
+        <div class="flow"><span>Что мы продаем</span><i>→</i><span>на какую сумму</span><i>→</i><span>что закроется</span><i>→</i><span>что зависло</span><i>→</i><span>где нужно вмешательство собственника</span></div>
+        <p>Он хочет видеть:</p>
+        <ul class="chips">
+          <li>сумму воронки</li>
+          <li>взвешенную воронку</li>
+          <li>прогноз закрытия на месяц</li>
+          <li>сделки без следующего действия</li>
+          <li>нет активности 7 / 14 / 30 / 60 дней</li>
+          <li>просроченные задачи</li>
+          <li>новые лиды</li>
+          <li>конверсию</li>
+          <li>длительность этапов</li>
+          <li>причины проигрышей</li>
+          <li>крупные сделки, требующие внимания</li>
+          <li>план/факт</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Собственнику нужен единый управленческий экран по нескольким направлениям компаний холдинга.</p>
+        <p class="strong-line">При этом я вижу решение не обязательно внутри Bitrix24 — я бы предложил обсудить отдельный управленческий слой.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция / предложение</div>
+        <div class="options">
+          <div class="opt pref">
+            <span class="pref-mark">склоняюсь</span>
+            <div class="opt-num">Вариант 1</div>
+            <h4>Кастомный сайт / личный кабинет собственника</h4>
+            <ul>
+              <li>данные подтягиваются из Bitrix24;</li>
+              <li>в перспективе можно подтянуть данные из нескольких систем;</li>
+              <li>можно сделать нормальный визуальный интерфейс;</li>
+              <li>собственник получает свой отдельный кабинет.</li>
+            </ul>
+          </div>
+          <div class="opt">
+            <div class="opt-num">Вариант 2</div>
+            <h4>Google Sheets / управленческая таблица</h4>
+            <ul>
+              <li>данные автоматически подтягиваются;</li>
+              <li>быстрее и проще;</li>
+              <li>меньше затрат на разработку;</li>
+              <li>но визуально и функционально это менее презентабельно.</li>
+            </ul>
+          </div>
+        </div>
+        <p>Я склоняюсь к кастомному варианту, если действительно нужен полноценный управленческий инструмент.</p>
+        <div class="callout blue">
+          <div class="callout-tag">Важный момент по дизайну</div>
+          <p>Если делать кастомный кабинет, нужно заранее определить визуальное направление: использовать существующий брендбук GGroup или сделать новый/адаптированный визуальный стиль.</p>
+          <p><b>Если нужен отдельный новый визуальный стиль — это уже дополнительный объем работы.</b></p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Какой формат собственнику удобнее: отдельный кабинет или таблица?</li>
+          <li>Какие показатели должны быть обязательными в первой версии?</li>
+          <li>Какие данные должны подтягиваться из GGroup и Т.Парка?</li>
+          <li>Нужен ли сразу визуальный дизайн отдельного интерфейса?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n2">Открытые комментарии</label></div>
+        <textarea id="n2" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 02">
+          <label class="st s-none"><input type="checkbox" id="st2-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st2-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st2-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 ===================== -->
+  <section class="block" id="b3" data-num="3" data-title="17 000+ лидов, контакты и компании">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 03_историческая_база.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">03</span>
+        <h2>17 000+ лидов, контакты и компании</h2>
+        <span class="tag amber">Исторические данные</span>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Он хочет более серьезной работы с исторической базой, а не просто исключить ее из проекта.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Я понимаю это как <b>полный анализ существующей базы</b>. Нужно проанализировать:</p>
+        <ul class="chips">
+          <li>лиды</li>
+          <li>контакты</li>
+          <li>компании</li>
+          <li>заполненность карточек</li>
+          <li>структуру данных</li>
+          <li>соответствие общей логике заполнения</li>
+          <li>проблемные и неполные карточки</li>
+          <li>отклонения от установленной логики</li>
+        </ul>
+        <p>Цель — чтобы данные были заполнены полноценно и единообразно. Если информации не хватает, по конкретным карточкам можно искать ее дополнительно и заполнять.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция</div>
+        <h4 style="margin-top:0">Дубли — в рамках 150 000 ₽ я готов:</h4>
+        <ul class="agree">
+          <li>определить правила дублей;</li>
+          <li>автоматически выявить дубли;</li>
+          <li>обработать/закрыть их по согласованной логике.</li>
+        </ul>
+        <div class="callout amber">
+          <div class="callout-tag">Компании и недостающие данные · здесь сложнее</div>
+          <p>Часть информации можно попробовать автоматически собрать из открытых источников. Но есть риск подтянуть неправильные ИНН или реквизиты. Поэтому критичные данные лучше отдельно проверять человеком.</p>
+          <p>Если таких карточек окажется много, нужно отдельно оценить объем ручной работы и решить, кто ее будет выполнять. Например, для большого объема несложной проверки можно рассмотреть отдельного недорогого сотрудника/студента под эту задачу.</p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <p class="strong-line">Главное — сначала посмотреть фактический объем проблемных карточек. После этого определить:</p>
+        <ul class="ask">
+          <li>Что автоматизируем?</li>
+          <li>Что исправляем автоматически?</li>
+          <li>Что требует ручной проверки?</li>
+          <li>Сколько ручной работы реально образуется?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n3">Открытые комментарии</label></div>
+        <textarea id="n3" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 03">
+          <label class="st s-none"><input type="checkbox" id="st3-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st3-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st3-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 ===================== -->
+  <section class="block" id="b4" data-num="4" data-title="Автоматизация">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 04_автоматизация.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">04</span>
+        <h2>Автоматизация</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Ему нужны не просто роботы на этапах, а полноценные бизнес-сценарии. Примеры:</p>
+        <ul>
+          <li>новый лид → ответственный → SLA → эскалация;</li>
+          <li>нет следующего действия → предупреждение;</li>
+          <li>7 дней нет активности → задача;</li>
+          <li>отправлено КП → контроль ответа;</li>
+          <li>проиграна сделка → обязательная причина;</li>
+          <li>повторный контакт через N месяцев.</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Сначала нужно определить <b>список ключевых сценариев</b>, согласовать их, а уже после этого реализовывать. Общую логику необходимых сценариев я понимаю.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция</div>
+        <p>До подписания я хочу структурировать эти сценарии в понятный список:</p>
+        <div class="flow"><span>Триггер</span><i>→</i><span>действие</span><i>→</i><span>срок</span><i>→</i><span>ответственный</span><i>→</i><span>результат</span></div>
+        <p>На встрече этот список можно пройти и согласовать.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <p class="dim" style="font-size:0.92rem">Прохожу сценарии по списку. Поля можно заполнять прямо во время разговора.</p>
+        <div class="table-wrap">
+          <table class="scn">
+            <thead><tr><th>Сценарий: триггер → действие</th><th>Срок</th><th>Ответственный</th><th>Результат</th></tr></thead>
+            <tbody>
+              <tr><td>Новый лид → ответственный → SLA → эскалация</td><td><input id="s1-srok" data-save aria-label="Срок"></td><td><input id="s1-resp" data-save aria-label="Ответственный"></td><td><input id="s1-res" data-save aria-label="Результат"></td></tr>
+              <tr><td>Нет следующего действия → предупреждение</td><td><input id="s2-srok" data-save aria-label="Срок"></td><td><input id="s2-resp" data-save aria-label="Ответственный"></td><td><input id="s2-res" data-save aria-label="Результат"></td></tr>
+              <tr><td>7 дней нет активности → задача</td><td><input id="s3-srok" data-save aria-label="Срок"></td><td><input id="s3-resp" data-save aria-label="Ответственный"></td><td><input id="s3-res" data-save aria-label="Результат"></td></tr>
+              <tr><td>Отправлено КП → контроль ответа</td><td><input id="s4-srok" data-save aria-label="Срок"></td><td><input id="s4-resp" data-save aria-label="Ответственный"></td><td><input id="s4-res" data-save aria-label="Результат"></td></tr>
+              <tr><td>Проиграна сделка → обязательная причина</td><td><input id="s5-srok" data-save aria-label="Срок"></td><td><input id="s5-resp" data-save aria-label="Ответственный"></td><td><input id="s5-res" data-save aria-label="Результат"></td></tr>
+              <tr><td>Повторный контакт через N месяцев</td><td><input id="s6-srok" data-save aria-label="Срок"></td><td><input id="s6-resp" data-save aria-label="Ответственный"></td><td><input id="s6-res" data-save aria-label="Результат"></td></tr>
+              <tr><td><input id="s7-name" data-save placeholder="+ сценарий" aria-label="Новый сценарий"></td><td><input id="s7-srok" data-save aria-label="Срок"></td><td><input id="s7-resp" data-save aria-label="Ответственный"></td><td><input id="s7-res" data-save aria-label="Результат"></td></tr>
+              <tr><td><input id="s8-name" data-save placeholder="+ сценарий" aria-label="Новый сценарий"></td><td><input id="s8-srok" data-save aria-label="Срок"></td><td><input id="s8-resp" data-save aria-label="Ответственный"></td><td><input id="s8-res" data-save aria-label="Результат"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n4">Открытые комментарии</label></div>
+        <textarea id="n4" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 04">
+          <label class="st s-none"><input type="checkbox" id="st4-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st4-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st4-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 ===================== -->
+  <section class="block" id="b5" data-num="5" data-title="Маркетинг и источники">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 05_маркетинг_и_источники.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">05</span>
+        <h2>Маркетинг и источники</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Ему нужна сквозная аналитика, а не просто количество лидов по источникам. Важно видеть путь:</p>
+        <div class="flow"><span>Источник</span><i>→</i><span>лид</span><i>→</i><span>квалификация</span><i>→</i><span>сделка</span><i>→</i><span>сумма</span><i>→</i><span>договор</span><i>→</i><span>результат/выручка</span></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Важно видеть клиента на всех этапах и понимать, где именно он мог отвалиться и из какого источника пришел. То есть аналитика должна позволять ответить:</p>
+        <p class="quote">«Из какого источника пришел клиент и на каком этапе мы его потеряли?»</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Какие именно 10 источников входят в работу?</li>
+          <li>Какие этапы считаем обязательными?</li>
+          <li>Какие показатели должны быть видны по каждому источнику?</li>
+          <li>До какого уровня доводим сквозную аналитику?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n5">Открытые комментарии</label></div>
+        <textarea id="n5" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 05">
+          <label class="st s-none"><input type="checkbox" id="st5-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st5-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st5-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 06 ===================== -->
+  <section class="block" id="b6" data-num="6" data-title="Документы">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 06_документы.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">06</span>
+        <h2>Документы</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Он хочет универсальные шаблоны документов, которые автоматически получают данные из CRM и могут редактироваться без программиста.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Сначала нужно определить точное количество: КП, договоров, счетов, юридических лиц / компаний с нашей стороны.</p>
+        <p>Важно, чтобы наши реквизиты можно было централизованно менять и чтобы они корректно использовались во всех необходимых шаблонах.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция</div>
+        <p>Количество шаблонов нужно определить точечно. Каждый шаблон необходимо подготовить и стандартизировать.</p>
+        <p><b>Если потребуется моя отдельная работа по каждому шаблону</b> — я могу этим заниматься и помогать со стандартизацией, но это дополнительный объем времени и работы.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Сколько реально нужно КП?</li>
+          <li>Сколько договоров?</li>
+          <li>Сколько счетов?</li>
+          <li>Сколько юридических лиц используется?</li>
+          <li>Какие шаблоны обязательны на первом этапе?</li>
+          <li>Кто предоставляет исходные шаблоны?</li>
+        </ul>
+        <div class="counts">
+          <label>КП <input type="number" min="0" id="c-kp" data-save data-label="КП"></label>
+          <label>Договоры <input type="number" min="0" id="c-dog" data-save data-label="Договоры"></label>
+          <label>Счета <input type="number" min="0" id="c-sch" data-save data-label="Счета"></label>
+          <label>Юрлица <input type="number" min="0" id="c-ul" data-save data-label="Юрлица"></label>
+        </div>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n6">Открытые комментарии</label></div>
+        <textarea id="n6" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 06">
+          <label class="st s-none"><input type="checkbox" id="st6-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st6-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st6-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 07 ===================== -->
+  <section class="block" id="b7" data-num="7" data-title="Контакты и отношения">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 07_контакты_и_отношения.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">07</span>
+        <h2>Контакты и отношения</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>CRM должна быть не только системой продаж, но и системой управления отношениями. У контакта могут быть разные роли:</p>
+        <ul class="chips">
+          <li>клиент</li>
+          <li>инвестор</li>
+          <li>партнер</li>
+          <li>ЛПР</li>
+          <li>официальный представитель</li>
+          <li>подрядчик</li>
+          <li>резидент технопарка</li>
+          <li>источник рекомендации</li>
+        </ul>
+        <p>Также должны учитываться связанные компании, проекты и интересы.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Я понимаю эту задачу. Кроме основной структуры контактов, я вижу смысл посмотреть, какие дополнительные инструменты можно использовать в Bitrix24 Marketplace для поддержания отношений. Например:</p>
+        <ul>
+          <li>автоматические поздравления с днем рождения;</li>
+          <li>напоминания сотрудникам о днях рождения контактов;</li>
+          <li>автоматические напоминания о необходимости связаться;</li>
+          <li>другие полезные механики для поддержания отношений.</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Какие сценарии relationship management действительно нужны в первой версии, а какие можно добавить позже?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n7">Открытые комментарии</label></div>
+        <textarea id="n7" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 07">
+          <label class="st s-none"><input type="checkbox" id="st7-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st7-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st7-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 08 ===================== -->
+  <section class="block" id="b8" data-num="8" data-title="Backup / AS-IS">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 08_бэкап_as-is.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">08</span>
+        <h2>Backup / AS-IS</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Перед изменениями:</p>
+        <ul>
+          <li>сохранить резервную копию/экспорт;</li>
+          <li>зафиксировать текущее состояние;</li>
+          <li>сделать карту AS-IS;</li>
+          <li>не удалять и не объединять данные без согласования.</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Здесь я согласен с логикой:</p>
+        <div class="flow"><span>AS-IS</span><i>→</i><span>проектирование</span><i>→</i><span>согласование</span><i>→</i><span>изменения</span></div>
+        <p>Сначала фиксирую текущее состояние системы, затем показываю целевую структуру и согласовываю ее, и только после этого начинаю серьезные изменения.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Что именно входит в AS-IS-пакет?</li>
+          <li>Какие изменения требуют отдельного согласования?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n8">Открытые комментарии</label></div>
+        <textarea id="n8" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 08">
+          <label class="st s-none"><input type="checkbox" id="st8-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st8-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st8-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 09 ===================== -->
+  <section class="block" id="b9" data-num="9" data-title="Приемка">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 09_приемка.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">09</span>
+        <h2>Приемка</h2>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <p>Результат должен приниматься по конкретному чек-листу.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <p>Я согласен. По итогам проекта должно быть понятно, что конкретно сделано и что проверено:</p>
+        <ul class="chips">
+          <li>архитектура</li>
+          <li>воронки</li>
+          <li>поля</li>
+          <li>роли</li>
+          <li>дашборды</li>
+          <li>автоматизации</li>
+          <li>источники</li>
+          <li>документы</li>
+          <li>паспорт системы</li>
+          <li>обучение</li>
+          <li>стабилизация</li>
+        </ul>
+        <p class="strong-line">Финальная оплата — после согласованной приемки.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <p>Сформировать этот чек-лист заранее и использовать его как основу финальной приемки.</p>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n9">Открытые комментарии</label></div>
+        <textarea id="n9" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 09">
+          <label class="st s-none"><input type="checkbox" id="st9-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st9-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st9-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 10 ===================== -->
+  <section class="block" id="b10" data-num="10" data-title="Обучение и стабилизация">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 10_обучение_и_стабилизация.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">10</span>
+        <h2>Обучение и стабилизация</h2>
+        <span class="tag amber">Один из самых трудозатратных блоков</span>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что сказал Евгений</div>
+        <ul class="chips">
+          <li>обучение сотрудников</li>
+          <li>обучение руководителя</li>
+          <li>инструкции</li>
+          <li>запись обучения</li>
+          <li>7–14 дней стабилизации</li>
+          <li>исправление выявленных ошибок</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это понял</div>
+        <ul class="agree">
+          <li>обучение сотрудников — согласен;</li>
+          <li>обучение руководителя — согласен;</li>
+          <li>инструкции — согласен;</li>
+          <li>14 дней стабилизации — согласен;</li>
+          <li>исправление ошибок — согласен.</li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция</div>
+        <h4 style="margin-top:0">Видео</h4>
+        <p>Здесь я хочу отдельно уточнить формат. Если это просто запись обычного обучения, которое я провожу сотрудникам, технически это можно считать частью текущего объема. Но я считаю такой формат не самым полезным.</p>
+        <div class="callout blue">
+          <div class="callout-tag">Мне больше нравится: короткая видео-инструкция</div>
+          <ul class="chips">
+            <li>запись экрана</li>
+            <li>без внутреннего общения</li>
+            <li>без воды</li>
+            <li>конкретно по шагам</li>
+            <li>один урок — один сценарий</li>
+            <li>для нового сотрудника, который пришел позже</li>
+          </ul>
+          <p>Такой формат полезнее обычной записи живого обучения.</p>
+        </div>
+
+        <h4>Исправление ошибок — предлагаю зафиксировать два уровня</h4>
+        <div class="tiers">
+          <div class="tier"><b>1 месяц</b>исправление выявленных проблем в логике системы</div>
+          <div class="tier"><b>до 2 месяцев</b>если появляются непонятные ошибки, требующие дополнительного анализа и возможного исправления</div>
+        </div>
+        <p class="strong-line">Важно отделять исправление ошибок от появления новых задач и нового функционала.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Что обсудить на встрече</div>
+        <ul class="ask">
+          <li>Нужна ли отдельная качественная видео-инструкция?</li>
+          <li>Какие сценарии должны быть в ней?</li>
+          <li>Как отличаем ошибку системы от новой задачи/доработки?</li>
+        </ul>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n10">Открытые комментарии</label></div>
+        <textarea id="n10" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 10">
+          <label class="st s-none"><input type="checkbox" id="st10-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st10-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st10-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 11 ===================== -->
+  <section class="block" id="b11" data-num="11" data-title="Границы первого этапа">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> 11_границы_первого_этапа.txt <span class="st-label"></span></div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">11</span>
+        <h2>Границы первого этапа</h2>
+        <span class="tag amber">Объем и доп. работы</span>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Как я это вижу</div>
+        <p>Я хочу сначала вместе с Евгением определить полный необходимый результат первого этапа, а уже потом окончательно зафиксировать объем. Базовая логика:</p>
+        <div class="flow"><span>Архитектура</span><i>→</i><span>CRM</span><i>→</i><span>дашборды</span><i>→</i><span>автоматизация</span><i>→</i><span>источники</span><i>→</i><span>документы</span><i>→</i><span>обучение</span><i>→</i><span>стабилизация</span></div>
+        <div class="callout amber">
+          <div class="callout-tag">Т.Парк · отдельно</div>
+          <p>Отдельно нужно внимательно обсудить Т.Парк: его полноценное внедрение по аналогии с GGroup существенно увеличивает объем работы. Если выясняется, что Т.Парк должен пройти такой же цикл —</p>
+          <ul class="chips">
+            <li>аудит</li>
+            <li>проектирование</li>
+            <li>настройку</li>
+            <li>автоматизацию</li>
+            <li>документы</li>
+            <li>обучение</li>
+            <li>инструкции</li>
+            <li>стабилизацию</li>
+          </ul>
+          <p><b>это уже другой объем проекта и требует отдельного пересчета сроков и стоимости.</b></p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Моя позиция по стоимости</div>
+        <p class="big">150 000 ₽ — стоимость текущего первого этапа в согласованном объеме</p>
+        <p>Если по итогам встречи добавляется существенный объем, особенно полноценная работа с Т.Парком или отдельная кастомная система управления, это нужно отдельно оценить.</p>
+      </div>
+
+      <div class="sec notes">
+        <div class="sec-label"><label for="n11">Открытые комментарии</label></div>
+        <textarea id="n11" data-save></textarea>
+      </div>
+
+      <div class="status-row">
+        <div class="sec-label">Итог</div>
+        <div class="status" role="group" aria-label="Итог по блоку 11">
+          <label class="st s-none"><input type="checkbox" id="st11-none" value="none" data-save><span class="box"></span>Не обсуждали</label>
+          <label class="st s-discussed"><input type="checkbox" id="st11-discussed" value="discussed" data-save><span class="box"></span>Обсудили</label>
+          <label class="st s-agreed"><input type="checkbox" id="st11-agreed" value="agreed" data-save><span class="box"></span>Согласовали</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ИТОГИ ===================== -->
+  <section class="block final" id="final">
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> итоги_встречи.txt</div>
+    <div class="block-body">
+      <div class="block-head">
+        <span class="block-num">✓</span>
+        <h2>Итоги встречи</h2>
+      </div>
+
+      <div class="final-sub">Что согласовали · статусы по блокам</div>
+      <div class="result">
+        <div class="result-tiles">
+          <div class="tile t-agreed"><b id="cnt-agreed">0</b><span>Согласовали</span></div>
+          <div class="tile t-discussed"><b id="cnt-discussed">0</b><span>Обсудили</span></div>
+          <div class="tile t-none"><b id="cnt-none">0</b><span>Не обсуждали</span></div>
+          <div class="tile t-empty"><b id="cnt-empty">11</b><span>Не отмечено</span></div>
+        </div>
+        <div id="summary"></div>
+      </div>
+
+      <div class="final-sub">Итог встречи</div>
+      <div class="final-grid">
+        <div class="final-field">
+          <label for="f1">Что согласовали</label>
+          <textarea id="f1" data-save data-label="Что согласовали"></textarea>
+        </div>
+        <div class="final-field">
+          <label for="f2">Что входит в первый этап</label>
+          <textarea id="f2" data-save data-label="Что входит в первый этап"></textarea>
+        </div>
+        <div class="final-field">
+          <label for="f3">Что требует дополнительной оценки</label>
+          <textarea id="f3" data-save data-label="Что требует дополнительной оценки"></textarea>
+        </div>
+        <div class="final-field">
+          <label for="f4">Что потенциально уходит во второй этап</label>
+          <textarea id="f4" data-save data-label="Что потенциально уходит во второй этап"></textarea>
+        </div>
+        <div class="final-field wide">
+          <label for="f5">Что нужно подготовить после встречи</label>
+          <textarea id="f5" data-save data-label="Что нужно подготовить после встречи"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="dl-pdf" type="button">Скачать итоги — PDF</button>
+        <button class="btn" id="dl-doc" type="button">Word (.doc)</button>
+        <button class="btn" id="dl-txt" type="button">Текст (.txt)</button>
+        <button class="btn ghost" id="reset" type="button">Очистить все заметки</button>
+        <p class="actions-note">В PDF попадут итог встречи, что согласовали и что обсудили, статусы всех блоков, заметки, сценарии автоматизации и количество шаблонов. Заметки хранятся только в этом браузере и в скачанном файле — на сайт они не отправляются.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>DAPI TEAM</span>
+    <span>Рабочий документ для встречи · не договор и не ТЗ</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var KEY = 'dapi-meeting-evgeny-v1';
+  var LABEL = { none: 'Не обсуждали', discussed: 'Обсудили', agreed: 'Согласовали', '': 'Не отмечено' };
+
+  // в тексте только «е»: U+0401/U+0451 меняем на «Е»/«е» и при вводе, и при выгрузке
+  var YO_LOW = String.fromCharCode(1105), YO_UP = String.fromCharCode(1025);
+  var YO = new RegExp('[' + YO_UP + YO_LOW + ']');
+  function noYo(s) { return String(s).split(YO_LOW).join('е').split(YO_UP).join('Е'); }
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function saveEls() { return $$('[data-save]'); }
+
+  function load() {
+    var data = {};
+    try { data = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { data = {}; }
+    saveEls().forEach(function (el) {
+      if (!Object.prototype.hasOwnProperty.call(data, el.id)) return;
+      if (el.type === 'checkbox') el.checked = !!data[el.id];
+      else el.value = noYo(data[el.id]);
+    });
+  }
+
+  var timer = null, flashTimer = null;
+  function save() {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      refresh();
+      var data = {};
+      saveEls().forEach(function (el) { data[el.id] = el.type === 'checkbox' ? el.checked : el.value; });
+      try {
+        localStorage.setItem(KEY, JSON.stringify(data));
+        var s = $('#saved');
+        s.classList.add('on');
+        clearTimeout(flashTimer);
+        flashTimer = setTimeout(function () { s.classList.remove('on'); }, 1200);
+      } catch (e) { /* хранилище недоступно — работаем без автосохранения */ }
+    }, 250);
+  }
+
+  function blockStatus(block) {
+    var c = $('.status input:checked', block);
+    return c ? c.value : '';
+  }
+
+  function blocks() { return $$('.block[data-num]'); }
+
+  function refresh() {
+    var groups = { agreed: [], discussed: [], none: [], '': [] };
+    blocks().forEach(function (b) {
+      var s = blockStatus(b);
+      b.setAttribute('data-status', s);
+      var lbl = $('.st-label', b);
+      if (lbl) lbl.textContent = s ? LABEL[s] : '';
+      var chip = $('.nav-chip[href="#b' + b.getAttribute('data-num') + '"]');
+      if (chip) chip.setAttribute('data-status', s);
+      groups[s].push(b);
+    });
+    var total = blocks().length;
+    $('#prog').textContent = 'Согласовали ' + groups.agreed.length + ' из ' + total + (groups.discussed.length ? ' · обсудили ' + groups.discussed.length : '');
+    $('#cnt-agreed').textContent = groups.agreed.length;
+    $('#cnt-discussed').textContent = groups.discussed.length;
+    $('#cnt-none').textContent = groups.none.length;
+    $('#cnt-empty').textContent = groups[''].length;
+    $('#summary').innerHTML =
+      resultList('rl-agreed', 'Согласовали', groups.agreed, 'Пока ни один блок не отмечен как согласованный.') +
+      resultList('rl-discussed', 'Обсудили, но пока не согласовали', groups.discussed, 'Нет блоков в статусе «Обсудили».') +
+      restList(groups.none.concat(groups['']));
+  }
+
+  function blockRef(b) {
+    return '<a href="#b' + b.getAttribute('data-num') + '"><span class="rl-num">' + pad(b.getAttribute('data-num')) + '</span>' +
+      esc(b.getAttribute('data-title')) + '</a>';
+  }
+  function resultList(cls, head, list, emptyText) {
+    var h = '<div class="rl ' + cls + '"><div class="rl-head">' + head + ' · ' + list.length + '</div>';
+    if (!list.length) return h + '<p class="rl-empty">' + emptyText + '</p></div>';
+    h += '<ul>';
+    list.forEach(function (b) {
+      var note = noYo((($('.notes textarea', b) || {}).value || '').trim());
+      h += '<li>' + blockRef(b) + (note ? '<p class="rl-note">' + esc(note) + '</p>' : '') + '</li>';
+    });
+    return h + '</ul></div>';
+  }
+  function restList(list) {
+    if (!list.length) return '';
+    list.sort(function (a, b) { return a.getAttribute('data-num') - b.getAttribute('data-num'); });
+    return '<div class="rl rl-rest"><div class="rl-head">Не обсуждали или не отмечено · ' + list.length + '</div>' +
+      '<p class="rl-rest-list">' + list.map(blockRef).join('') + '</p></div>';
+  }
+
+  function pad(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
+
+  function grow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.max(el.scrollHeight + 2, 0) + 'px';
+  }
+
+  // взаимоисключающие статусы (визуально — чекбоксы)
+  $$('.status').forEach(function (group) {
+    group.addEventListener('change', function (e) {
+      var cb = e.target;
+      if (cb.checked) $$('input[type=checkbox]', group).forEach(function (o) { if (o !== cb) o.checked = false; });
+      refresh();
+    });
+  });
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if ((t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text')) && YO.test(t.value)) {
+      var a = t.selectionStart, z = t.selectionEnd;
+      t.value = noYo(t.value);
+      try { t.setSelectionRange(a, z); } catch (err) { /* у поля нет выделения */ }
+    }
+    if (t.tagName === 'TEXTAREA') grow(t);
+    if (t.hasAttribute('data-save')) save();
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.hasAttribute('data-save')) save();
+  });
+
+  // ---------- выгрузка ----------
+  function collect() {
+    var list = blocks().map(function (b) {
+      var item = {
+        num: pad(b.getAttribute('data-num')),
+        title: b.getAttribute('data-title'),
+        status: LABEL[blockStatus(b)],
+        notes: noYo((($('.notes textarea', b) || {}).value || '').trim()),
+        scenarios: [],
+        counts: []
+      };
+      $$('table.scn tbody tr', b).forEach(function (r) {
+        var cells = $$('td', r);
+        var nameInput = $('input', cells[0]);
+        var name = noYo(nameInput ? nameInput.value.trim() : cells[0].textContent.trim());
+        var vals = cells.slice(1).map(function (c) { var i = $('input', c); return i ? noYo(i.value.trim()) : ''; });
+        var filled = vals.some(function (v) { return v; }) || (nameInput && name);
+        if (filled) item.scenarios.push({ name: name || '(без названия)', srok: vals[0], resp: vals[1], res: vals[2] });
+      });
+      $$('.counts input', b).forEach(function (i) {
+        if (i.value !== '') item.counts.push({ label: i.getAttribute('data-label'), value: i.value });
+      });
+      return item;
+    });
+    var final = $$('.final-field textarea').map(function (t) {
+      return { label: t.getAttribute('data-label'), value: noYo(t.value.trim()) };
+    });
+    return { date: new Date(), blocks: list, final: final };
+  }
+
+  function fmtDate(d) {
+    function z(n) { return n < 10 ? '0' + n : String(n); }
+    return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + z(d.getHours()) + ':' + z(d.getMinutes());
+  }
+  function fileDate(d) {
+    function z(n) { return n < 10 ? '0' + n : String(n); }
+    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+  }
+
+  function statusLine(d) {
+    var g = { 'Согласовали': [], 'Обсудили': [], 'Не обсуждали': [], 'Не отмечено': [] };
+    d.blocks.forEach(function (b) { g[b.status].push(b.num + '. ' + b.title); });
+    return g;
+  }
+
+  function toText(d) {
+    var out = [];
+    out.push('ФИКСАЦИЯ ВСТРЕЧИ — ОБРАТНАЯ СВЯЗЬ ПО КП НА ВНЕДРЕНИЕ BITRIX24 (GGROUP)');
+    out.push('Дата выгрузки: ' + fmtDate(d.date));
+    out.push('');
+    var g = statusLine(d);
+    out.push('СВОДКА ПО СТАТУСАМ');
+    Object.keys(g).forEach(function (k) { out.push(k + ': ' + (g[k].join('; ') || '—')); });
+    out.push('');
+    out.push('ИТОГИ ВСТРЕЧИ');
+    d.final.forEach(function (f) {
+      out.push('');
+      out.push(f.label.toUpperCase());
+      out.push(f.value || '—');
+    });
+    out.push('');
+    out.push('ПО БЛОКАМ');
+    d.blocks.forEach(function (b) {
+      out.push('');
+      out.push(b.num + '. ' + b.title + ' — ' + b.status);
+      if (b.scenarios.length) {
+        out.push('Сценарии автоматизации:');
+        b.scenarios.forEach(function (s) {
+          out.push('  • ' + s.name + ' | срок: ' + (s.srok || '—') + ' | ответственный: ' + (s.resp || '—') + ' | результат: ' + (s.res || '—'));
+        });
+      }
+      if (b.counts.length) {
+        out.push('Количество шаблонов: ' + b.counts.map(function (c) { return c.label + ' — ' + c.value; }).join(', '));
+      }
+      out.push('Заметки: ' + (b.notes ? '\n' + b.notes : '—'));
+    });
+    out.push('');
+    out.push('— DAPI TEAM · рабочий документ для встречи');
+    return out.join('\r\n');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function paras(s) {
+    if (!s) return '<p class="empty">—</p>';
+    return s.split(/\r?\n/).map(function (l) { return '<p>' + (esc(l) || '&nbsp;') + '</p>'; }).join('');
+  }
+
+  function toDoc(d) {
+    var g = statusLine(d);
+    var h = [];
+    h.push('<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">');
+    h.push('<head><meta charset="utf-8"><title>Итоги встречи</title>');
+    h.push('<style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1D1D1F}h1{font-size:18pt;margin:0 0 4pt}h2{font-size:13pt;margin:18pt 0 6pt;border-bottom:1px solid #ccc;padding-bottom:3pt}h3{font-size:11.5pt;margin:12pt 0 3pt}p{margin:0 0 3pt}.meta{color:#6E6E73;font-size:10pt}.st{font-weight:bold}.ok{color:#1B7F34}.disc{color:#0071E3}.empty{color:#999}table{border-collapse:collapse;width:100%;margin:4pt 0}td,th{border:1px solid #ccc;padding:3pt 5pt;font-size:10pt;text-align:left;vertical-align:top}th{background:#f2f2f4}</style>');
+    h.push('</head><body>');
+    h.push('<h1>Фиксация встречи — обратная связь по КП на внедрение Bitrix24 (GGroup)</h1>');
+    h.push('<p class="meta">Дата выгрузки: ' + fmtDate(d.date) + ' · DAPI TEAM</p>');
+    h.push('<h2>Сводка по статусам</h2>');
+    Object.keys(g).forEach(function (k) { h.push('<p><b>' + k + ':</b> ' + (esc(g[k].join('; ')) || '—') + '</p>'); });
+    h.push('<h2>Итоги встречи</h2>');
+    d.final.forEach(function (f) { h.push('<h3>' + esc(f.label) + '</h3>' + paras(f.value)); });
+    h.push('<h2>По блокам</h2>');
+    d.blocks.forEach(function (b) {
+      var cls = b.status === 'Согласовали' ? 'ok' : (b.status === 'Обсудили' ? 'disc' : '');
+      h.push('<h3>' + b.num + '. ' + esc(b.title) + ' — <span class="st ' + cls + '">' + b.status + '</span></h3>');
+      if (b.scenarios.length) {
+        h.push('<table><tr><th>Сценарий</th><th>Срок</th><th>Ответственный</th><th>Результат</th></tr>');
+        b.scenarios.forEach(function (s) {
+          h.push('<tr><td>' + esc(s.name) + '</td><td>' + esc(s.srok || '—') + '</td><td>' + esc(s.resp || '—') + '</td><td>' + esc(s.res || '—') + '</td></tr>');
+        });
+        h.push('</table>');
+      }
+      if (b.counts.length) {
+        h.push('<p><b>Количество шаблонов:</b> ' + b.counts.map(function (c) { return esc(c.label) + ' — ' + esc(c.value); }).join(', ') + '</p>');
+      }
+      h.push('<p><b>Заметки:</b></p>' + paras(b.notes));
+    });
+    h.push('</body></html>');
+    return h.join('');
+  }
+
+  function download(name, content, type) {
+    saveBlob(name, new Blob(['\ufeff' + content], { type: type }));
+  }
+  function saveBlob(name, blob) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1500);
+  }
+
+  // ---------- PDF ----------
+  // pdfmake лежит рядом в vendor/; если страница открыта отдельным файлом — берем с CDN
+  var PDF_LIBS = [
+    ['vendor/pdfmake.min.js', 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js'],
+    ['vendor/vfs_fonts.js', 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js']
+  ];
+  var pdfLoading = null;
+
+  function loadScript(urls) {
+    return new Promise(function (resolve, reject) {
+      var i = 0;
+      (function next() {
+        if (i >= urls.length) { reject(new Error('Не загрузился ' + urls[0])); return; }
+        var s = document.createElement('script');
+        s.src = urls[i++];
+        s.onload = function () { resolve(); };
+        s.onerror = function () { s.remove(); next(); };
+        document.head.appendChild(s);
+      })();
+    });
+  }
+
+  function ensurePdf() {
+    if (window.pdfMake && window.pdfMake.vfs) return Promise.resolve(window.pdfMake);
+    if (!pdfLoading) {
+      pdfLoading = loadScript(PDF_LIBS[0])
+        .then(function () { return loadScript(PDF_LIBS[1]); })
+        .then(function () { return window.pdfMake; });
+    }
+    return pdfLoading;
+  }
+
+  // в шрифте Roboto нет стрелки и галочек — подменяем на близкие знаки
+  function pdfTxt(s) {
+    return noYo(s == null ? '' : s).replace(/→/g, '›').replace(/[✓✔]/g, '+').replace(/[☐-☒]/g, '');
+  }
+
+  function toPdf(d) {
+    var C = { text: '#1D1D1F', dim: '#6E6E73', faint: '#A1A1A6', line: '#E3E3E8', green: '#1B7F34', greenBg: '#EAF8EE',
+      blue: '#0071E3', blueBg: '#EDF4FE', grayBg: '#F5F5F7' };
+    var ST = {
+      'Согласовали': { color: C.green, bg: C.greenBg },
+      'Обсудили': { color: C.blue, bg: C.blueBg },
+      'Не обсуждали': { color: C.dim, bg: C.grayBg },
+      'Не отмечено': { color: C.faint, bg: C.grayBg }
+    };
+    var ORDER = ['Согласовали', 'Обсудили', 'Не обсуждали', 'Не отмечено'];
+    var groups = {};
+    ORDER.forEach(function (k) { groups[k] = []; });
+    d.blocks.forEach(function (b) { groups[b.status].push(b); });
+
+    function grid() {
+      return {
+        hLineWidth: function (i, node) { return i === 0 || i === node.table.body.length ? 0 : 0.6; },
+        vLineWidth: function () { return 0; },
+        hLineColor: function (i) { return i === 1 ? '#C7C7CC' : C.line; },
+        paddingLeft: function () { return 6; }, paddingRight: function () { return 6; },
+        paddingTop: function () { return 4; }, paddingBottom: function () { return 4; }
+      };
+    }
+    function th(t) { return { text: t.toUpperCase(), style: 'th', fillColor: C.grayBg }; }
+    function h2(t, color) { return { text: t, style: 'h2', color: color || C.text }; }
+    function para(s) { return s ? { text: pdfTxt(s), style: 'body' } : { text: '—', style: 'empty' }; }
+    // заголовок раздела держим на одной странице с первым пунктом
+    function section(title, color, items) {
+      var first = items[0];
+      content.push({ stack: [h2(title, color), first], unbreakable: first.unbreakable !== false });
+      items.slice(1).forEach(function (n) { content.push(n); });
+    }
+
+    function details(b) {
+      var parts = [{
+        columnGap: 10,
+        columns: [
+          { width: '*', text: b.num + '. ' + pdfTxt(b.title), style: 'h3' },
+          { width: 'auto', text: b.status, style: 'pill', color: ST[b.status].color }
+        ]
+      }];
+      if (b.scenarios.length) {
+        var sr = [[th('Сценарий'), th('Срок'), th('Ответственный'), th('Результат')]];
+        b.scenarios.forEach(function (s) {
+          sr.push([pdfTxt(s.name), pdfTxt(s.srok) || '—', pdfTxt(s.resp) || '—', pdfTxt(s.res) || '—']);
+        });
+        parts.push({ text: 'СЦЕНАРИИ АВТОМАТИЗАЦИИ', style: 'label' });
+        parts.push({ table: { headerRows: 1, widths: ['*', 62, 92, 110], body: sr }, layout: grid(), fontSize: 9 });
+      }
+      if (b.counts.length) {
+        parts.push({ text: 'КОЛИЧЕСТВО ШАБЛОНОВ', style: 'label' });
+        parts.push({ text: b.counts.map(function (c) { return pdfTxt(c.label) + ' — ' + pdfTxt(c.value); }).join(', '), style: 'body' });
+      }
+      parts.push({ text: 'ЗАМЕТКИ', style: 'label' });
+      parts.push(para(b.notes));
+      // короткие блоки не рвем между страницами; длинные пусть переносятся
+      return { stack: parts, margin: [0, 0, 0, 12], unbreakable: b.notes.length + b.scenarios.length * 120 < 1500 };
+    }
+
+    var content = [];
+    content.push({ text: 'DAPI TEAM', style: 'brand' });
+    content.push({ text: 'Итоги встречи с Евгением', style: 'h1' });
+    content.push({ text: 'Обратная связь по КП на внедрение Bitrix24 · GGroup', style: 'sub' });
+    content.push({ text: 'Дата выгрузки: ' + fmtDate(d.date), style: 'meta' });
+
+    content.push({
+      margin: [0, 16, 0, 0],
+      table: {
+        widths: ['*', '*', '*', '*'],
+        body: [ORDER.map(function (k) {
+          return { fillColor: ST[k].bg, stack: [
+            { text: String(groups[k].length), fontSize: 22, bold: true, color: ST[k].color },
+            { text: k, fontSize: 9, color: C.dim }
+          ] };
+        })]
+      },
+      layout: {
+        hLineWidth: function () { return 0; },
+        vLineWidth: function (i) { return i === 0 || i === 4 ? 0 : 6; },
+        vLineColor: function () { return '#FFFFFF'; },
+        paddingLeft: function () { return 10; }, paddingRight: function () { return 10; },
+        paddingTop: function () { return 8; }, paddingBottom: function () { return 8; }
+      }
+    });
+
+    var rows = [[th('№'), th('Блок'), th('Статус')]];
+    d.blocks.forEach(function (b) {
+      var strong = b.status === 'Согласовали' || b.status === 'Обсудили';
+      rows.push([
+        { text: b.num, color: C.dim },
+        { text: pdfTxt(b.title), bold: strong },
+        { text: b.status, color: ST[b.status].color, bold: strong, fillColor: strong ? ST[b.status].bg : undefined }
+      ]);
+    });
+    section('Что согласовали · статусы по блокам', null,
+      [{ table: { headerRows: 1, widths: [22, '*', 92], body: rows }, layout: grid(), fontSize: 10 }]);
+
+    section('Итог встречи', null, d.final.map(function (f) {
+      return { stack: [{ text: pdfTxt(f.label).toUpperCase(), style: 'label' }, para(f.value)], unbreakable: f.value.length < 1500 };
+    }));
+
+    [
+      ['Согласовали', 'Согласовали — подробно', 'Пока ни один блок не отмечен как согласованный.'],
+      ['Обсудили', 'Обсудили, но пока не согласовали', 'Нет блоков в статусе «Обсудили».']
+    ].forEach(function (s) {
+      var list = groups[s[0]];
+      section(s[1], ST[s[0]].color, list.length ? list.map(function (b) { return details(b); }) : [{ text: s[2], style: 'empty' }]);
+    });
+
+    var rest = groups['Не обсуждали'].concat(groups['Не отмечено']).sort(function (a, b) { return a.num < b.num ? -1 : 1; });
+    if (rest.length) {
+      var items = [], bare = [];
+      rest.forEach(function (b) {
+        if (b.notes || b.scenarios.length || b.counts.length) items.push(details(b));
+        else bare.push(b.num + '. ' + pdfTxt(b.title));
+      });
+      if (bare.length) items.push({ text: 'Без заметок: ' + bare.join('; '), style: 'body', color: C.dim });
+      section('Не обсуждали или не отмечено', null, items);
+    }
+
+    return {
+      pageSize: 'A4',
+      pageMargins: [42, 40, 42, 50],
+      info: { title: 'Итоги встречи по КП', author: 'DAPI TEAM', subject: 'Обратная связь по КП на внедрение Bitrix24' },
+      content: content,
+      footer: function (page, pages) {
+        return { margin: [42, 18, 42, 0], fontSize: 8, color: C.dim, columns: [
+          { text: 'DAPI TEAM · рабочий документ для встречи, не договор и не ТЗ' },
+          { text: page + ' / ' + pages, alignment: 'right', width: 'auto' }
+        ] };
+      },
+      defaultStyle: { fontSize: 10, color: C.text, lineHeight: 1.2 },
+      styles: {
+        brand: { fontSize: 9, bold: true, characterSpacing: 2, color: C.dim },
+        h1: { fontSize: 21, bold: true, margin: [0, 8, 0, 3] },
+        sub: { fontSize: 11, color: C.dim },
+        meta: { fontSize: 9, color: C.faint, margin: [0, 3, 0, 0] },
+        h2: { fontSize: 13, bold: true, margin: [0, 22, 0, 8] },
+        h3: { fontSize: 11, bold: true, margin: [0, 6, 0, 0] },
+        pill: { fontSize: 8.5, bold: true, margin: [0, 8, 0, 0] },
+        label: { fontSize: 7.5, bold: true, color: C.dim, characterSpacing: 1, margin: [0, 7, 0, 2] },
+        body: { fontSize: 10, lineHeight: 1.3 },
+        empty: { fontSize: 10, color: C.faint },
+        th: { fontSize: 7.5, bold: true, color: C.dim, characterSpacing: 0.5 }
+      }
+    };
+  }
+
+  $('#dl-pdf').addEventListener('click', function () {
+    var btn = this, label = btn.textContent;
+    function done() { btn.disabled = false; btn.textContent = label; }
+    btn.disabled = true;
+    btn.textContent = 'Готовлю PDF…';
+    var d = collect();
+    ensurePdf().then(function (pm) {
+      pm.createPdf(toPdf(d)).getBlob(function (blob) {
+        saveBlob('Итоги_встречи_по_КП_' + fileDate(d.date) + '.pdf', blob);
+        done();
+      });
+    }).catch(function (err) {
+      pdfLoading = null;
+      done();
+      if (window.console) console.error(err);
+      window.alert('Не получилось собрать PDF. Проверьте интернет и попробуйте еще раз, а пока можно скачать итоги в Word или текстом.');
+    });
+  });
+
+  $('#dl-doc').addEventListener('click', function () {
+    var d = collect();
+    download('Итоги_встречи_по_КП_' + fileDate(d.date) + '.doc', toDoc(d), 'application/msword');
+  });
+  $('#dl-txt').addEventListener('click', function () {
+    var d = collect();
+    download('Итоги_встречи_по_КП_' + fileDate(d.date) + '.txt', toText(d), 'text/plain;charset=utf-8');
+  });
+  $('#reset').addEventListener('click', function () {
+    if (!window.confirm('Очистить все статусы и заметки? Это действие не отменить — сначала лучше скачать итоги.')) return;
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    saveEls().forEach(function (el) { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
+    $$('textarea').forEach(grow);
+    refresh();
+  });
+
+  load();
+  $$('textarea').forEach(grow);
+  refresh();
+})();
+</script>
+</body>
+</html>
