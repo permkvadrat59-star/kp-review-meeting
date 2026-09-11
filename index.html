@@ -192,42 +192,62 @@
   /* final block */
   .final { border: 2px solid var(--text); }
   .final .block-num { color: var(--text); }
+  .final-sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 600; margin: 0 0 0.8rem; }
+  .final-hint { margin: -0.3rem 0 1rem; font-size: 0.88rem; color: var(--text-dim); }
+  .meta-grid, .final-grid { margin-bottom: 2.2rem; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 1rem 1.4rem; }
   .final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 1.4rem; }
   .final-field.wide { grid-column: 1 / -1; }
   .final-field label { display: block; font-weight: 700; margin-bottom: 0.4rem; }
   .final-field label span { display: block; font-weight: 400; font-size: 0.85rem; color: var(--text-dim); }
-  .final-sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--text-dim); font-weight: 600; margin: 0 0 0.8rem; }
+  .final-field input { width: 100%; font: inherit; font-size: 0.96rem; color: var(--text); padding: 0.5rem 0.9rem;
+    border: 1px dashed #CFCFD6; border-radius: 8px; background: #fff; }
+  .final-field input:focus { outline: none; border-style: solid; border-color: var(--blue); }
+  .to-proto { margin-left: 0.6rem; font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0; text-transform: none; font-weight: 600;
+    color: var(--green-ink); background: var(--green-bg); border-radius: 999px; padding: 0.1rem 0.5rem; white-space: nowrap; }
 
-  /* results board */
-  .result { margin: 0 0 2rem; }
-  .result-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin-bottom: 1rem; }
-  .tile { border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; background: var(--panel-2); }
-  .tile b { display: block; font-family: var(--mono); font-size: 1.9rem; line-height: 1.1; }
-  .tile span { font-size: 0.85rem; color: var(--text-dim); }
-  .tile.t-agreed { background: var(--green-bg); border-color: #A9E3B8; }
-  .tile.t-agreed b { color: var(--green-ink); }
-  .tile.t-discussed { background: var(--blue-bg); border-color: #B8D4FA; }
-  .tile.t-discussed b { color: var(--blue); }
-  .tile.t-empty b { color: var(--text-dim); }
-  .rl { border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 0.8rem; background: var(--panel); }
-  .rl-agreed { border-left: 4px solid var(--green); }
-  .rl-discussed { border-left: 4px solid var(--blue); }
-  .rl-head { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 0.55rem; }
-  .rl-agreed .rl-head { color: var(--green-ink); }
-  .rl-discussed .rl-head { color: var(--blue); }
-  .rl-rest .rl-head { color: var(--text-dim); }
-  .rl ul { list-style: none; margin: 0; padding: 0; }
-  .rl li { padding: 0.5rem 0; border-top: 1px dashed var(--border); }
-  .rl li:first-child { border-top: 0; padding-top: 0; }
-  .rl li:last-child { padding-bottom: 0; }
-  .rl a { color: var(--text); text-decoration: none; font-weight: 600; }
-  .rl a:hover { text-decoration: underline; }
-  .rl-num { font-family: var(--mono); color: var(--text-dim); font-weight: 500; margin-right: 0.45rem; }
-  .rl-note { margin: 0.3rem 0 0; font-size: 0.92rem; color: var(--text-dim); white-space: pre-wrap; }
-  .rl-empty { margin: 0; font-size: 0.92rem; color: var(--text-dim); }
-  .rl-rest-list { margin: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; font-size: 0.9rem; }
-  .rl-rest-list a { font-weight: 500; color: var(--text-dim); }
+  /* protocol preview (the same markup goes into the Word file) */
+  .proto { border: 1px solid var(--border); border-radius: 12px; background: #fff; padding: 1.7rem 1.9rem 1.5rem; box-shadow: var(--shadow); }
+  .proto p { margin: 0; }
+  .pv-brand { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; color: var(--text-dim); }
+  .proto .pv-h1 { font-size: 1.7rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin: 0.45rem 0 0.2rem; }
+  .pv-sub { color: var(--text-dim); }
+  .proto .pv-meta { font-size: 0.85rem; color: var(--text-dim); margin: 0.25rem 0 1.1rem; }
+  .pv-tiles, .pv-tiles tbody { display: block; }
+  .pv-tiles tr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+  .pv-tiles td { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; background: var(--panel-2); }
+  .pv-tiles b { display: block; font-family: var(--mono); font-size: 1.7rem; line-height: 1.1; }
+  .pv-tiles br { display: none; }
+  .pv-tiles span { font-size: 0.85rem; color: var(--text-dim); }
+  .pv-tiles td.t-agreed { background: var(--green-bg); border-color: #A9E3B8; }
+  .pv-tiles td.t-agreed b { color: var(--green-ink); }
+  .pv-tiles td.t-discussed { background: var(--blue-bg); border-color: #B8D4FA; }
+  .pv-tiles td.t-discussed b { color: var(--blue); }
+  .pv-tiles td.t-none b { color: var(--text-dim); }
+  .proto .pv-h2 { font-size: 1.1rem; margin: 1.6rem 0 0.6rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+  .proto .h-agreed { color: var(--green-ink); }
+  .proto .h-discussed { color: var(--blue); }
+  .pv-rec { margin: 0.55rem 0; padding: 0.15rem 0 0.15rem 0.9rem; border-left: 3px solid var(--border); }
+  .pv-rec.r-agreed { border-left-color: var(--green); }
+  .pv-rec.r-discussed { border-left-color: var(--blue); }
+  .proto .pv-bt { font-weight: 700; margin-bottom: 0.15rem; }
+  .proto .pv-text { font-size: 0.95rem; margin-bottom: 0.15rem; }
+  .proto .pv-label { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; color: var(--text-dim); margin: 0.6rem 0 0.25rem; }
+  .pv-muted { color: var(--text-dim); }
+  .pv-inf { margin-left: 0.4rem; font-family: var(--mono); font-size: 0.66rem; font-weight: 500; color: var(--amber-ink);
+    background: var(--amber-bg); border-radius: 999px; padding: 0.08rem 0.45rem; white-space: nowrap; }
+  .pv-warn { margin: 0.8rem 0 0; padding: 0.7rem 0.9rem; border: 1px dashed var(--amber-line); border-radius: 8px;
+    background: var(--amber-bg); color: var(--amber-ink); font-size: 0.9rem; }
+  .pv-table { width: 100%; border-collapse: collapse; margin: 0.3rem 0 0.4rem; font-size: 0.88rem; }
+  .pv-scroll { overflow-x: auto; }
+  .pv-scroll .pv-table { min-width: 460px; }
+  .pv-table th { text-align: left; font-family: var(--mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); background: var(--panel-2); padding: 0.4rem 0.55rem; border-bottom: 1px solid var(--border); }
+  .pv-table td { padding: 0.4rem 0.55rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .pv-table .s-agreed { color: var(--green-ink); font-weight: 600; }
+  .pv-table .s-discussed { color: var(--blue); font-weight: 600; }
+  .pv-table .s-none { color: var(--text-dim); }
   .btn[disabled] { opacity: .6; cursor: progress; }
   .actions { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; margin-top: 1.6rem; padding-top: 1.3rem; border-top: 1px solid var(--border); }
   .btn { font: inherit; font-size: 0.95rem; font-weight: 600; border-radius: 10px; padding: 0.75rem 1.2rem; cursor: pointer; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
@@ -242,8 +262,11 @@
     padding-top: 1.2rem; margin-top: 1rem; font-family: var(--mono); font-size: 0.76rem; color: var(--text-dim); }
 
   @media (max-width: 720px) {
-    .options, .tiers, .final-grid { grid-template-columns: 1fr; }
-    .result-tiles { grid-template-columns: 1fr 1fr; }
+    .options, .tiers, .final-grid, .meta-grid { grid-template-columns: 1fr; }
+    .proto { padding: 1.1rem 1rem; }
+    .pv-tiles tr { grid-template-columns: 1fr; gap: 0.4rem; }
+    .pv-tiles td { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.45rem 0.8rem; }
+    .pv-tiles b { font-size: 1.3rem; }
     .topnav-in { gap: 0.45rem 0.8rem; }
     .chips-nav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
     .chips-nav::-webkit-scrollbar { display: none; }
@@ -302,7 +325,7 @@
     <p>Сначала синхронизирую понимание, потом фиксирую объем.</p>
     <div class="howto">
       <span>статусы и заметки сохраняются в этом браузере автоматически</span>
-      <span>в конце — что согласовали, итог встречи и выгрузка в PDF</span>
+      <span>в конце — протокол встречи для клиента и выгрузка в PDF</span>
     </div>
   </div>
 
@@ -1025,25 +1048,27 @@
 
   <!-- ===================== ИТОГИ ===================== -->
   <section class="block final" id="final">
-    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> итоги_встречи.txt</div>
+    <div class="card-title"><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span> протокол_встречи.txt</div>
     <div class="block-body">
       <div class="block-head">
         <span class="block-num">✓</span>
-        <h2>Итоги встречи</h2>
+        <h2>Итоги встречи и протокол</h2>
       </div>
 
-      <div class="final-sub">Что согласовали · статусы по блокам</div>
-      <div class="result">
-        <div class="result-tiles">
-          <div class="tile t-agreed"><b id="cnt-agreed">0</b><span>Согласовали</span></div>
-          <div class="tile t-discussed"><b id="cnt-discussed">0</b><span>Обсудили</span></div>
-          <div class="tile t-none"><b id="cnt-none">0</b><span>Не обсуждали</span></div>
-          <div class="tile t-empty"><b id="cnt-empty">11</b><span>Не отмечено</span></div>
+      <div class="final-sub">Шапка протокола</div>
+      <div class="meta-grid">
+        <div class="final-field">
+          <label for="m-date">Дата встречи</label>
+          <input type="text" id="m-date" data-save autocomplete="off">
         </div>
-        <div id="summary"></div>
+        <div class="final-field">
+          <label for="m-people">Участники</label>
+          <input type="text" id="m-people" data-save autocomplete="off" placeholder="например: Евгений (GGroup), Илья (DAPI TEAM)">
+        </div>
       </div>
 
-      <div class="final-sub">Итог встречи</div>
+      <div class="final-sub">Итог встречи · заполняю в конце</div>
+      <p class="final-hint">Согласованные блоки и все записи по блокам попадут в протокол автоматически. Здесь — общий вывод своими словами.</p>
       <div class="final-grid">
         <div class="final-field">
           <label for="f1">Что согласовали</label>
@@ -1062,17 +1087,20 @@
           <textarea id="f4" data-save data-label="Что потенциально уходит во второй этап"></textarea>
         </div>
         <div class="final-field wide">
-          <label for="f5">Что нужно подготовить после встречи</label>
+          <label for="f5">Что нужно подготовить после встречи<span>в протоколе это раздел «Что дальше»: что делаем, кто и к какому сроку</span></label>
           <textarea id="f5" data-save data-label="Что нужно подготовить после встречи"></textarea>
         </div>
       </div>
 
+      <div class="final-sub">Протокол для клиента · так он будет выглядеть в PDF</div>
+      <div class="proto" id="proto" aria-live="polite"></div>
+
       <div class="actions">
-        <button class="btn primary" id="dl-pdf" type="button">Скачать итоги — PDF</button>
+        <button class="btn primary" id="dl-pdf" type="button">Скачать протокол (PDF)</button>
         <button class="btn" id="dl-doc" type="button">Word (.doc)</button>
         <button class="btn" id="dl-txt" type="button">Текст (.txt)</button>
         <button class="btn ghost" id="reset" type="button">Очистить все заметки</button>
-        <p class="actions-note">В PDF попадут итог встречи, что согласовали и что обсудили, статусы всех блоков, заметки, сценарии автоматизации и количество шаблонов. Заметки хранятся только в этом браузере и в скачанном файле — на сайт они не отправляются.</p>
+        <p class="actions-note">В протокол попадают шапка, итог встречи и все записи по блокам: комментарии, сценарии автоматизации, количество шаблонов и статусы. Тексты страницы («Как я это понял», «Моя позиция») в протокол не попадают. Все, что вы пишете в комментариях к блокам, увидит клиент. Заметки хранятся только в этом браузере и в скачанном файле.</p>
       </div>
     </div>
   </section>
@@ -1088,6 +1116,12 @@
 (function () {
   var KEY = 'dapi-meeting-evgeny-v1';
   var LABEL = { none: 'Не обсуждали', discussed: 'Обсудили', agreed: 'Согласовали', '': 'Не отмечено' };
+  // статусы в протоколе для клиента; блок без отметки: есть записи — «Обсудили», нет — «Не обсуждали»
+  var EFF = { agreed: 'Согласовано', discussed: 'Обсудили', none: 'Не обсуждали' };
+  var ORDER = ['agreed', 'discussed', 'none'];
+  var AGREED_EMPTY = 'Согласованных пунктов пока нет.';
+  var SUBTITLE = 'Обратная связь по КП на внедрение Bitrix24 · GGroup';
+  var BOM = String.fromCharCode(0xFEFF);
 
   // в тексте только «е»: U+0401/U+0451 меняем на «Е»/«е» и при вводе, и при выгрузке
   var YO_LOW = String.fromCharCode(1105), YO_UP = String.fromCharCode(1025);
@@ -1097,7 +1131,15 @@
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
   function saveEls() { return $$('[data-save]'); }
+  function blocks() { return $$('.block[data-num]'); }
+  function pad(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
+  function z(n) { return n < 10 ? '0' + n : String(n); }
+  function fmtDay(d) { return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear(); }
+  function fileDate(d) { return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function lines(s) { return String(s).split(/\r?\n/); }
 
+  // ---------- автосохранение ----------
   function load() {
     var data = {};
     try { data = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { data = {}; }
@@ -1125,58 +1167,28 @@
     }, 250);
   }
 
+  // ---------- статусы и превью ----------
   function blockStatus(block) {
     var c = $('.status input:checked', block);
     return c ? c.value : '';
   }
 
-  function blocks() { return $$('.block[data-num]'); }
-
   function refresh() {
-    var groups = { agreed: [], discussed: [], none: [], '': [] };
+    var agreed = 0, discussed = 0, total = 0;
     blocks().forEach(function (b) {
       var s = blockStatus(b);
+      total++;
+      if (s === 'agreed') agreed++;
+      if (s === 'discussed') discussed++;
       b.setAttribute('data-status', s);
       var lbl = $('.st-label', b);
       if (lbl) lbl.textContent = s ? LABEL[s] : '';
       var chip = $('.nav-chip[href="#b' + b.getAttribute('data-num') + '"]');
       if (chip) chip.setAttribute('data-status', s);
-      groups[s].push(b);
     });
-    var total = blocks().length;
-    $('#prog').textContent = 'Согласовали ' + groups.agreed.length + ' из ' + total + (groups.discussed.length ? ' · обсудили ' + groups.discussed.length : '');
-    $('#cnt-agreed').textContent = groups.agreed.length;
-    $('#cnt-discussed').textContent = groups.discussed.length;
-    $('#cnt-none').textContent = groups.none.length;
-    $('#cnt-empty').textContent = groups[''].length;
-    $('#summary').innerHTML =
-      resultList('rl-agreed', 'Согласовали', groups.agreed, 'Пока ни один блок не отмечен как согласованный.') +
-      resultList('rl-discussed', 'Обсудили, но пока не согласовали', groups.discussed, 'Нет блоков в статусе «Обсудили».') +
-      restList(groups.none.concat(groups['']));
+    $('#prog').textContent = 'Согласовали ' + agreed + ' из ' + total + (discussed ? ' · обсудили ' + discussed : '');
+    $('#proto').innerHTML = protoHtml(model(collect()), true);
   }
-
-  function blockRef(b) {
-    return '<a href="#b' + b.getAttribute('data-num') + '"><span class="rl-num">' + pad(b.getAttribute('data-num')) + '</span>' +
-      esc(b.getAttribute('data-title')) + '</a>';
-  }
-  function resultList(cls, head, list, emptyText) {
-    var h = '<div class="rl ' + cls + '"><div class="rl-head">' + head + ' · ' + list.length + '</div>';
-    if (!list.length) return h + '<p class="rl-empty">' + emptyText + '</p></div>';
-    h += '<ul>';
-    list.forEach(function (b) {
-      var note = noYo((($('.notes textarea', b) || {}).value || '').trim());
-      h += '<li>' + blockRef(b) + (note ? '<p class="rl-note">' + esc(note) + '</p>' : '') + '</li>';
-    });
-    return h + '</ul></div>';
-  }
-  function restList(list) {
-    if (!list.length) return '';
-    list.sort(function (a, b) { return a.getAttribute('data-num') - b.getAttribute('data-num'); });
-    return '<div class="rl rl-rest"><div class="rl-head">Не обсуждали или не отмечено · ' + list.length + '</div>' +
-      '<p class="rl-rest-list">' + list.map(blockRef).join('') + '</p></div>';
-  }
-
-  function pad(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
 
   function grow(el) {
     el.style.height = 'auto';
@@ -1195,9 +1207,9 @@
   document.addEventListener('input', function (e) {
     var t = e.target;
     if ((t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text')) && YO.test(t.value)) {
-      var a = t.selectionStart, z = t.selectionEnd;
+      var a = t.selectionStart, b = t.selectionEnd;
       t.value = noYo(t.value);
-      try { t.setSelectionRange(a, z); } catch (err) { /* у поля нет выделения */ }
+      try { t.setSelectionRange(a, b); } catch (err) { /* у поля нет выделения */ }
     }
     if (t.tagName === 'TEXTAREA') grow(t);
     if (t.hasAttribute('data-save')) save();
@@ -1206,13 +1218,14 @@
     if (e.target.hasAttribute('data-save')) save();
   });
 
-  // ---------- выгрузка ----------
+  // ---------- данные протокола ----------
   function collect() {
     var list = blocks().map(function (b) {
+      var key = blockStatus(b);
       var item = {
         num: pad(b.getAttribute('data-num')),
         title: b.getAttribute('data-title'),
-        status: LABEL[blockStatus(b)],
+        key: key,
         notes: noYo((($('.notes textarea', b) || {}).value || '').trim()),
         scenarios: [],
         counts: []
@@ -1228,115 +1241,187 @@
       $$('.counts input', b).forEach(function (i) {
         if (i.value !== '') item.counts.push({ label: i.getAttribute('data-label'), value: i.value });
       });
+      item.hasRec = !!(item.notes || item.scenarios.length || item.counts.length);
+      item.eff = key || (item.hasRec ? 'discussed' : 'none');
       return item;
     });
     var final = $$('.final-field textarea').map(function (t) {
-      return { label: t.getAttribute('data-label'), value: noYo(t.value.trim()) };
+      return { id: t.id, label: t.getAttribute('data-label'), value: noYo(t.value.trim()) };
     });
-    return { date: new Date(), blocks: list, final: final };
+    var now = new Date();
+    return {
+      date: now,
+      meetDate: noYo($('#m-date').value.trim()) || fmtDay(now),
+      people: noYo($('#m-people').value.trim()),
+      blocks: list,
+      final: final
+    };
   }
 
-  function fmtDate(d) {
-    function z(n) { return n < 10 ? '0' + n : String(n); }
-    return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + z(d.getHours()) + ':' + z(d.getMinutes());
-  }
-  function fileDate(d) {
-    function z(n) { return n < 10 ? '0' + n : String(n); }
-    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
-  }
-
-  function statusLine(d) {
-    var g = { 'Согласовали': [], 'Обсудили': [], 'Не обсуждали': [], 'Не отмечено': [] };
-    d.blocks.forEach(function (b) { g[b.status].push(b.num + '. ' + b.title); });
-    return g;
-  }
-
-  function toText(d) {
-    var out = [];
-    out.push('ФИКСАЦИЯ ВСТРЕЧИ — ОБРАТНАЯ СВЯЗЬ ПО КП НА ВНЕДРЕНИЕ BITRIX24 (GGROUP)');
-    out.push('Дата выгрузки: ' + fmtDate(d.date));
-    out.push('');
-    var g = statusLine(d);
-    out.push('СВОДКА ПО СТАТУСАМ');
-    Object.keys(g).forEach(function (k) { out.push(k + ': ' + (g[k].join('; ') || '—')); });
-    out.push('');
-    out.push('ИТОГИ ВСТРЕЧИ');
-    d.final.forEach(function (f) {
-      out.push('');
-      out.push(f.label.toUpperCase());
-      out.push(f.value || '—');
+  // порядок разделов протокола; пустые разделы в файл не попадают
+  function model(d) {
+    var by = { agreed: [], discussed: [], none: [] }, F = {};
+    d.blocks.forEach(function (b) { by[b.eff].push(b); });
+    d.final.forEach(function (f) { F[f.id] = f; });
+    var sections = [{ id: 'agreed', title: 'О чем договорились', text: F.f1.value, blocks: by.agreed }];
+    if (F.f5.value) sections.push({ id: 'next', title: 'Что дальше', text: F.f5.value });
+    var scope = [F.f2, F.f3, F.f4].filter(function (f) { return f.value; });
+    if (scope.length) sections.push({ id: 'scope', title: 'Объем работ', items: scope });
+    if (by.discussed.length) sections.push({ id: 'discussed', title: 'Обсудили, решение позже', blocks: by.discussed });
+    if (by.none.length) sections.push({
+      id: 'none', title: 'Не обсуждали на встрече',
+      blocks: by.none.filter(function (b) { return b.hasRec; }),
+      also: by.none.filter(function (b) { return !b.hasRec; })
     });
-    out.push('');
-    out.push('ПО БЛОКАМ');
-    d.blocks.forEach(function (b) {
-      out.push('');
-      out.push(b.num + '. ' + b.title + ' — ' + b.status);
-      if (b.scenarios.length) {
-        out.push('Сценарии автоматизации:');
-        b.scenarios.forEach(function (s) {
-          out.push('  • ' + s.name + ' | срок: ' + (s.srok || '—') + ' | ответственный: ' + (s.resp || '—') + ' | результат: ' + (s.res || '—'));
-        });
-      }
-      if (b.counts.length) {
-        out.push('Количество шаблонов: ' + b.counts.map(function (c) { return c.label + ' — ' + c.value; }).join(', '));
-      }
-      out.push('Заметки: ' + (b.notes ? '\n' + b.notes : '—'));
-    });
-    out.push('');
-    out.push('— DAPI TEAM · рабочий документ для встречи');
-    return out.join('\r\n');
+    sections.push({ id: 'summary', title: 'Сводка по блокам' });
+    return { d: d, by: by, F: F, sections: sections };
   }
 
-  function esc(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-  function paras(s) {
-    if (!s) return '<p class="empty">—</p>';
-    return s.split(/\r?\n/).map(function (l) { return '<p>' + (esc(l) || '&nbsp;') + '</p>'; }).join('');
+  function metaLine(d) { return 'Дата встречи: ' + d.meetDate + (d.people ? ' · Участники: ' + d.people : ''); }
+  function countsLine(b) { return b.counts.map(function (c) { return c.label + ' — ' + c.value; }).join(', '); }
+  function blockName(b) { return b.num + '. ' + b.title; }
+  function alsoLine(s) { return (s.blocks.length ? 'Также не обсуждали: ' : '') + s.also.map(blockName).join('; '); }
+
+  // ---------- HTML протокола: превью на странице и файл Word ----------
+  function ptext(s) {
+    return lines(s).map(function (l) { return '<p class="pv-text">' + (esc(l) || '&nbsp;') + '</p>'; }).join('');
   }
 
-  function toDoc(d) {
-    var g = statusLine(d);
-    var h = [];
-    h.push('<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">');
-    h.push('<head><meta charset="utf-8"><title>Итоги встречи</title>');
-    h.push('<style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1D1D1F}h1{font-size:18pt;margin:0 0 4pt}h2{font-size:13pt;margin:18pt 0 6pt;border-bottom:1px solid #ccc;padding-bottom:3pt}h3{font-size:11.5pt;margin:12pt 0 3pt}p{margin:0 0 3pt}.meta{color:#6E6E73;font-size:10pt}.st{font-weight:bold}.ok{color:#1B7F34}.disc{color:#0071E3}.empty{color:#999}table{border-collapse:collapse;width:100%;margin:4pt 0}td,th{border:1px solid #ccc;padding:3pt 5pt;font-size:10pt;text-align:left;vertical-align:top}th{background:#f2f2f4}</style>');
-    h.push('</head><body>');
-    h.push('<h1>Фиксация встречи — обратная связь по КП на внедрение Bitrix24 (GGroup)</h1>');
-    h.push('<p class="meta">Дата выгрузки: ' + fmtDate(d.date) + ' · DAPI TEAM</p>');
-    h.push('<h2>Сводка по статусам</h2>');
-    Object.keys(g).forEach(function (k) { h.push('<p><b>' + k + ':</b> ' + (esc(g[k].join('; ')) || '—') + '</p>'); });
-    h.push('<h2>Итоги встречи</h2>');
-    d.final.forEach(function (f) { h.push('<h3>' + esc(f.label) + '</h3>' + paras(f.value)); });
-    h.push('<h2>По блокам</h2>');
-    d.blocks.forEach(function (b) {
-      var cls = b.status === 'Согласовали' ? 'ok' : (b.status === 'Обсудили' ? 'disc' : '');
-      h.push('<h3>' + b.num + '. ' + esc(b.title) + ' — <span class="st ' + cls + '">' + b.status + '</span></h3>');
-      if (b.scenarios.length) {
-        h.push('<table><tr><th>Сценарий</th><th>Срок</th><th>Ответственный</th><th>Результат</th></tr>');
-        b.scenarios.forEach(function (s) {
-          h.push('<tr><td>' + esc(s.name) + '</td><td>' + esc(s.srok || '—') + '</td><td>' + esc(s.resp || '—') + '</td><td>' + esc(s.res || '—') + '</td></tr>');
+  function recHtml(b, forPage) {
+    var h = '<div class="pv-rec r-' + b.eff + '"><p class="pv-bt">' + esc(blockName(b)) +
+      (forPage && !b.key ? '<span class="pv-inf">статус не отмечен</span>' : '') + '</p>';
+    if (b.notes) h += ptext(b.notes);
+    if (b.scenarios.length) {
+      h += '<p class="pv-label">СЦЕНАРИИ АВТОМАТИЗАЦИИ</p><div class="pv-scroll"><table class="pv-table"><tr><th>Сценарий</th><th>Срок</th><th>Ответственный</th><th>Результат</th></tr>';
+      b.scenarios.forEach(function (s) {
+        h += '<tr><td>' + esc(s.name) + '</td><td>' + esc(s.srok || '—') + '</td><td>' + esc(s.resp || '—') + '</td><td>' + esc(s.res || '—') + '</td></tr>';
+      });
+      h += '</table></div>';
+    }
+    if (b.counts.length) h += '<p class="pv-text"><b>Количество шаблонов:</b> ' + esc(countsLine(b)) + '</p>';
+    return h + '</div>';
+  }
+
+  function protoHtml(m, forPage) {
+    var d = m.d, h = [];
+    h.push('<p class="pv-brand">DAPI TEAM</p>');
+    h.push('<p class="pv-h1">Протокол встречи</p>');
+    h.push('<p class="pv-sub">' + SUBTITLE + '</p>');
+    h.push('<p class="pv-meta">' + esc(metaLine(d)) + '</p>');
+    h.push('<table class="pv-tiles"><tr>' + ORDER.map(function (k) {
+      return '<td class="t-' + k + '"><b>' + m.by[k].length + '</b><br><span>' + EFF[k] + '</span></td>';
+    }).join('') + '</tr></table>');
+    m.sections.forEach(function (s, i) {
+      h.push('<h3 class="pv-h2 h-' + s.id + '">' + (i + 1) + '. ' + s.title + '</h3>');
+      if (s.id === 'agreed') {
+        if (s.text) h.push(ptext(s.text));
+        s.blocks.forEach(function (b) { h.push(recHtml(b, forPage)); });
+        if (!s.text && !s.blocks.length) h.push('<p class="pv-text pv-muted">' + AGREED_EMPTY + '</p>');
+        if (forPage && !m.F.f5.value) h.push('<div class="pv-warn">Раздела «Что дальше» пока нет: заполните поле «Что нужно подготовить после встречи», чтобы клиент видел следующие шаги.</div>');
+      } else if (s.id === 'next') {
+        h.push(ptext(s.text));
+      } else if (s.id === 'scope') {
+        s.items.forEach(function (f) { h.push('<p class="pv-label">' + esc(f.label.toUpperCase()) + '</p>' + ptext(f.value)); });
+      } else if (s.id === 'discussed') {
+        s.blocks.forEach(function (b) { h.push(recHtml(b, forPage)); });
+      } else if (s.id === 'none') {
+        s.blocks.forEach(function (b) { h.push(recHtml(b, forPage)); });
+        if (s.also.length) h.push('<p class="pv-text pv-muted">' + esc(alsoLine(s)) + '</p>');
+      } else if (s.id === 'summary') {
+        h.push('<table class="pv-table"><tr><th>№</th><th>Блок</th><th>Статус</th></tr>');
+        d.blocks.forEach(function (b) {
+          h.push('<tr><td class="pv-muted">' + b.num + '</td><td>' + esc(b.title) + '</td><td class="s-' + b.eff + '">' + EFF[b.eff] +
+            (forPage && !b.key ? '<span class="pv-inf">не отмечен</span>' : '') + '</td></tr>');
         });
         h.push('</table>');
       }
-      if (b.counts.length) {
-        h.push('<p><b>Количество шаблонов:</b> ' + b.counts.map(function (c) { return esc(c.label) + ' — ' + esc(c.value); }).join(', ') + '</p>');
-      }
-      h.push('<p><b>Заметки:</b></p>' + paras(b.notes));
     });
-    h.push('</body></html>');
     return h.join('');
   }
 
-  function download(name, content, type) {
-    saveBlob(name, new Blob(['\ufeff' + content], { type: type }));
+  // ---------- Word ----------
+  var WORD_CSS = [
+    'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1D1D1F}',
+    'p{margin:0 0 3pt}',
+    '.pv-brand{font-size:9pt;font-weight:bold;letter-spacing:2pt;color:#6E6E73}',
+    '.pv-h1{font-size:20pt;font-weight:bold;margin:6pt 0 2pt}',
+    '.pv-sub{font-size:11pt;color:#6E6E73}',
+    '.pv-meta{font-size:9.5pt;color:#6E6E73;margin:2pt 0 10pt}',
+    '.pv-tiles{width:100%;border-collapse:separate;border-spacing:6pt 0;margin:0 0 6pt}',
+    '.pv-tiles td{width:33%;padding:6pt 10pt;background:#F5F5F7;vertical-align:top}',
+    '.pv-tiles td.t-agreed{background:#EAF8EE}',
+    '.pv-tiles td.t-discussed{background:#EDF4FE}',
+    '.pv-tiles b{font-size:20pt}',
+    '.pv-tiles td.t-agreed b{color:#1B7F34}',
+    '.pv-tiles td.t-discussed b{color:#0071E3}',
+    '.pv-tiles span{font-size:9pt;color:#6E6E73}',
+    '.pv-h2{font-size:13pt;margin:16pt 0 6pt;padding-bottom:3pt;border-bottom:1px solid #E3E3E8}',
+    '.h-agreed{color:#1B7F34}',
+    '.h-discussed{color:#0071E3}',
+    '.pv-rec{margin:6pt 0;padding-left:8pt;border-left:3px solid #E3E3E8}',
+    '.r-agreed{border-left-color:#28C840}',
+    '.r-discussed{border-left-color:#0071E3}',
+    '.pv-bt{font-weight:bold;margin:0 0 2pt}',
+    '.pv-label{font-size:8pt;font-weight:bold;color:#6E6E73;letter-spacing:1pt;margin:6pt 0 2pt}',
+    '.pv-muted{color:#6E6E73}',
+    '.pv-table{border-collapse:collapse;width:100%;margin:3pt 0 5pt}',
+    '.pv-table td,.pv-table th{border:1px solid #E3E3E8;padding:3pt 5pt;font-size:10pt;text-align:left;vertical-align:top}',
+    '.pv-table th{background:#F5F5F7;font-size:8pt;color:#6E6E73}',
+    '.s-agreed{color:#1B7F34;font-weight:bold}',
+    '.s-discussed{color:#0071E3;font-weight:bold}',
+    '.s-none{color:#6E6E73}',
+    '.pv-foot{margin-top:18pt;font-size:8.5pt;color:#6E6E73}'
+  ].join('');
+
+  function toDoc(d) {
+    return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>Протокол встречи</title><style>' + WORD_CSS + '</style></head><body>' +
+      protoHtml(model(d), false) +
+      '<p class="pv-foot">DAPI TEAM · протокол встречи по КП на внедрение Bitrix24</p></body></html>';
   }
-  function saveBlob(name, blob) {
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1500);
+
+  // ---------- текст ----------
+  function toText(d) {
+    var m = model(d), out = [];
+    function push(s) { lines(s).forEach(function (l) { out.push(l); }); }
+    function rec(b) {
+      out.push('');
+      out.push(blockName(b));
+      if (b.notes) lines(b.notes).forEach(function (l) { out.push('  ' + l); });
+      b.scenarios.forEach(function (s) {
+        out.push('  • ' + s.name + ' | срок: ' + (s.srok || '—') + ' | ответственный: ' + (s.resp || '—') + ' | результат: ' + (s.res || '—'));
+      });
+      if (b.counts.length) out.push('  Количество шаблонов: ' + countsLine(b));
+    }
+    out.push('ПРОТОКОЛ ВСТРЕЧИ');
+    out.push(SUBTITLE);
+    out.push(metaLine(d));
+    out.push(ORDER.map(function (k) { return EFF[k] + ': ' + m.by[k].length; }).join(' · ') + ' (из ' + d.blocks.length + ')');
+    m.sections.forEach(function (s, i) {
+      out.push('');
+      out.push('');
+      out.push((i + 1) + '. ' + s.title.toUpperCase());
+      if (s.id === 'agreed') {
+        if (s.text) push(s.text);
+        s.blocks.forEach(rec);
+        if (!s.text && !s.blocks.length) out.push(AGREED_EMPTY);
+      } else if (s.id === 'next') {
+        push(s.text);
+      } else if (s.id === 'scope') {
+        s.items.forEach(function (f) { out.push(''); out.push(f.label + ':'); push(f.value); });
+      } else if (s.id === 'discussed') {
+        s.blocks.forEach(rec);
+      } else if (s.id === 'none') {
+        s.blocks.forEach(rec);
+        if (s.also.length) { out.push(''); out.push(alsoLine(s)); }
+      } else if (s.id === 'summary') {
+        d.blocks.forEach(function (b) { out.push(blockName(b) + ' — ' + EFF[b.eff]); });
+      }
+    });
+    out.push('');
+    out.push('');
+    out.push('DAPI TEAM · протокол встречи');
+    return out.join('\r\n');
   }
 
   // ---------- PDF ----------
@@ -1377,18 +1462,14 @@
   }
 
   function toPdf(d) {
-    var C = { text: '#1D1D1F', dim: '#6E6E73', faint: '#A1A1A6', line: '#E3E3E8', green: '#1B7F34', greenBg: '#EAF8EE',
+    var m = model(d), content = [];
+    var C = { text: '#1D1D1F', dim: '#6E6E73', faint: '#A1A1A6', line: '#E3E3E8', green: '#1B7F34', greenBar: '#28C840', greenBg: '#EAF8EE',
       blue: '#0071E3', blueBg: '#EDF4FE', grayBg: '#F5F5F7' };
     var ST = {
-      'Согласовали': { color: C.green, bg: C.greenBg },
-      'Обсудили': { color: C.blue, bg: C.blueBg },
-      'Не обсуждали': { color: C.dim, bg: C.grayBg },
-      'Не отмечено': { color: C.faint, bg: C.grayBg }
+      agreed: { color: C.green, bg: C.greenBg, bar: C.greenBar },
+      discussed: { color: C.blue, bg: C.blueBg, bar: C.blue },
+      none: { color: C.dim, bg: C.grayBg, bar: C.line }
     };
-    var ORDER = ['Согласовали', 'Обсудили', 'Не обсуждали', 'Не отмечено'];
-    var groups = {};
-    ORDER.forEach(function (k) { groups[k] = []; });
-    d.blocks.forEach(function (b) { groups[b.status].push(b); });
 
     function grid() {
       return {
@@ -1400,122 +1481,117 @@
       };
     }
     function th(t) { return { text: t.toUpperCase(), style: 'th', fillColor: C.grayBg }; }
-    function h2(t, color) { return { text: t, style: 'h2', color: color || C.text }; }
-    function para(s) { return s ? { text: pdfTxt(s), style: 'body' } : { text: '—', style: 'empty' }; }
+    function para(s) { return { text: pdfTxt(s), style: 'body', margin: [0, 0, 0, 6], unbreakable: s.length < 1500 }; }
     // заголовок раздела держим на одной странице с первым пунктом
     function section(title, color, items) {
       var first = items[0];
-      content.push({ stack: [h2(title, color), first], unbreakable: first.unbreakable !== false });
+      content.push({ stack: [{ text: title, style: 'h2', color: color || C.text }, first], unbreakable: first.unbreakable !== false });
       items.slice(1).forEach(function (n) { content.push(n); });
     }
-
-    function details(b) {
-      var parts = [{
-        columnGap: 10,
-        columns: [
-          { width: '*', text: b.num + '. ' + pdfTxt(b.title), style: 'h3' },
-          { width: 'auto', text: b.status, style: 'pill', color: ST[b.status].color }
-        ]
-      }];
+    function rec(b) {
+      var parts = [{ text: pdfTxt(blockName(b)), style: 'h3' }];
+      if (b.notes) parts.push({ text: pdfTxt(b.notes), style: 'body' });
       if (b.scenarios.length) {
         var sr = [[th('Сценарий'), th('Срок'), th('Ответственный'), th('Результат')]];
         b.scenarios.forEach(function (s) {
           sr.push([pdfTxt(s.name), pdfTxt(s.srok) || '—', pdfTxt(s.resp) || '—', pdfTxt(s.res) || '—']);
         });
         parts.push({ text: 'СЦЕНАРИИ АВТОМАТИЗАЦИИ', style: 'label' });
-        parts.push({ table: { headerRows: 1, widths: ['*', 62, 92, 110], body: sr }, layout: grid(), fontSize: 9 });
+        parts.push({ table: { headerRows: 1, widths: ['*', 58, 88, 104], body: sr }, layout: grid(), fontSize: 9 });
       }
-      if (b.counts.length) {
-        parts.push({ text: 'КОЛИЧЕСТВО ШАБЛОНОВ', style: 'label' });
-        parts.push({ text: b.counts.map(function (c) { return pdfTxt(c.label) + ' — ' + pdfTxt(c.value); }).join(', '), style: 'body' });
-      }
-      parts.push({ text: 'ЗАМЕТКИ', style: 'label' });
-      parts.push(para(b.notes));
-      // короткие блоки не рвем между страницами; длинные пусть переносятся
-      return { stack: parts, margin: [0, 0, 0, 12], unbreakable: b.notes.length + b.scenarios.length * 120 < 1500 };
+      if (b.counts.length) parts.push({ text: [{ text: 'Количество шаблонов: ', bold: true }, pdfTxt(countsLine(b))], style: 'body', margin: [0, 3, 0, 0] });
+      // короткие записи не рвем между страницами; длинные пусть переносятся
+      return {
+        margin: [0, 0, 0, 10],
+        unbreakable: b.notes.length + b.scenarios.length * 120 < 1500,
+        table: { widths: ['*'], body: [[{ stack: parts }]] },
+        layout: {
+          hLineWidth: function () { return 0; },
+          vLineWidth: function (i) { return i === 0 ? 2.5 : 0; },
+          vLineColor: function () { return ST[b.eff].bar; },
+          paddingLeft: function () { return 10; }, paddingRight: function () { return 0; },
+          paddingTop: function () { return 1; }, paddingBottom: function () { return 1; }
+        }
+      };
     }
 
-    var content = [];
     content.push({ text: 'DAPI TEAM', style: 'brand' });
-    content.push({ text: 'Итоги встречи с Евгением', style: 'h1' });
-    content.push({ text: 'Обратная связь по КП на внедрение Bitrix24 · GGroup', style: 'sub' });
-    content.push({ text: 'Дата выгрузки: ' + fmtDate(d.date), style: 'meta' });
-
+    content.push({ text: 'Протокол встречи', style: 'h1' });
+    content.push({ text: SUBTITLE, style: 'sub' });
+    content.push({ text: pdfTxt(metaLine(d)), style: 'meta' });
     content.push({
-      margin: [0, 16, 0, 0],
+      margin: [0, 14, 0, 0],
       table: {
-        widths: ['*', '*', '*', '*'],
+        widths: ['*', '*', '*'],
         body: [ORDER.map(function (k) {
           return { fillColor: ST[k].bg, stack: [
-            { text: String(groups[k].length), fontSize: 22, bold: true, color: ST[k].color },
-            { text: k, fontSize: 9, color: C.dim }
+            { text: String(m.by[k].length), fontSize: 22, bold: true, color: ST[k].color },
+            { text: EFF[k], fontSize: 9, color: C.dim }
           ] };
         })]
       },
       layout: {
         hLineWidth: function () { return 0; },
-        vLineWidth: function (i) { return i === 0 || i === 4 ? 0 : 6; },
+        vLineWidth: function (i) { return i === 0 || i === 3 ? 0 : 6; },
         vLineColor: function () { return '#FFFFFF'; },
         paddingLeft: function () { return 10; }, paddingRight: function () { return 10; },
         paddingTop: function () { return 8; }, paddingBottom: function () { return 8; }
       }
     });
 
-    var rows = [[th('№'), th('Блок'), th('Статус')]];
-    d.blocks.forEach(function (b) {
-      var strong = b.status === 'Согласовали' || b.status === 'Обсудили';
-      rows.push([
-        { text: b.num, color: C.dim },
-        { text: pdfTxt(b.title), bold: strong },
-        { text: b.status, color: ST[b.status].color, bold: strong, fillColor: strong ? ST[b.status].bg : undefined }
-      ]);
+    m.sections.forEach(function (s, i) {
+      var title = (i + 1) + '. ' + s.title, items = [], color = null;
+      if (s.id === 'agreed') {
+        color = C.green;
+        if (s.text) items.push(para(s.text));
+        s.blocks.forEach(function (b) { items.push(rec(b)); });
+        if (!items.length) items.push({ text: AGREED_EMPTY, style: 'empty' });
+      } else if (s.id === 'next') {
+        items.push(para(s.text));
+      } else if (s.id === 'scope') {
+        s.items.forEach(function (f) {
+          items.push({ stack: [{ text: pdfTxt(f.label).toUpperCase(), style: 'label' }, { text: pdfTxt(f.value), style: 'body' }], unbreakable: f.value.length < 1500 });
+        });
+      } else if (s.id === 'discussed') {
+        color = C.blue;
+        s.blocks.forEach(function (b) { items.push(rec(b)); });
+      } else if (s.id === 'none') {
+        s.blocks.forEach(function (b) { items.push(rec(b)); });
+        if (s.also.length) items.push({ text: pdfTxt(alsoLine(s)), style: 'body', color: C.dim });
+      } else if (s.id === 'summary') {
+        var rows = [[th('№'), th('Блок'), th('Статус')]];
+        d.blocks.forEach(function (b) {
+          var strong = b.eff !== 'none';
+          rows.push([
+            { text: b.num, color: C.dim },
+            { text: pdfTxt(b.title), bold: strong },
+            { text: EFF[b.eff], color: ST[b.eff].color, bold: strong, fillColor: strong ? ST[b.eff].bg : undefined }
+          ]);
+        });
+        items.push({ table: { headerRows: 1, widths: [22, '*', 92], body: rows }, layout: grid(), fontSize: 10 });
+      }
+      section(title, color, items);
     });
-    section('Что согласовали · статусы по блокам', null,
-      [{ table: { headerRows: 1, widths: [22, '*', 92], body: rows }, layout: grid(), fontSize: 10 }]);
-
-    section('Итог встречи', null, d.final.map(function (f) {
-      return { stack: [{ text: pdfTxt(f.label).toUpperCase(), style: 'label' }, para(f.value)], unbreakable: f.value.length < 1500 };
-    }));
-
-    [
-      ['Согласовали', 'Согласовали — подробно', 'Пока ни один блок не отмечен как согласованный.'],
-      ['Обсудили', 'Обсудили, но пока не согласовали', 'Нет блоков в статусе «Обсудили».']
-    ].forEach(function (s) {
-      var list = groups[s[0]];
-      section(s[1], ST[s[0]].color, list.length ? list.map(function (b) { return details(b); }) : [{ text: s[2], style: 'empty' }]);
-    });
-
-    var rest = groups['Не обсуждали'].concat(groups['Не отмечено']).sort(function (a, b) { return a.num < b.num ? -1 : 1; });
-    if (rest.length) {
-      var items = [], bare = [];
-      rest.forEach(function (b) {
-        if (b.notes || b.scenarios.length || b.counts.length) items.push(details(b));
-        else bare.push(b.num + '. ' + pdfTxt(b.title));
-      });
-      if (bare.length) items.push({ text: 'Без заметок: ' + bare.join('; '), style: 'body', color: C.dim });
-      section('Не обсуждали или не отмечено', null, items);
-    }
 
     return {
       pageSize: 'A4',
       pageMargins: [42, 40, 42, 50],
-      info: { title: 'Итоги встречи по КП', author: 'DAPI TEAM', subject: 'Обратная связь по КП на внедрение Bitrix24' },
+      info: { title: 'Протокол встречи', author: 'DAPI TEAM', subject: SUBTITLE },
       content: content,
       footer: function (page, pages) {
         return { margin: [42, 18, 42, 0], fontSize: 8, color: C.dim, columns: [
-          { text: 'DAPI TEAM · рабочий документ для встречи, не договор и не ТЗ' },
+          { text: 'DAPI TEAM · протокол встречи по КП на внедрение Bitrix24' },
           { text: page + ' / ' + pages, alignment: 'right', width: 'auto' }
         ] };
       },
       defaultStyle: { fontSize: 10, color: C.text, lineHeight: 1.2 },
       styles: {
         brand: { fontSize: 9, bold: true, characterSpacing: 2, color: C.dim },
-        h1: { fontSize: 21, bold: true, margin: [0, 8, 0, 3] },
+        h1: { fontSize: 22, bold: true, margin: [0, 8, 0, 3] },
         sub: { fontSize: 11, color: C.dim },
-        meta: { fontSize: 9, color: C.faint, margin: [0, 3, 0, 0] },
-        h2: { fontSize: 13, bold: true, margin: [0, 22, 0, 8] },
-        h3: { fontSize: 11, bold: true, margin: [0, 6, 0, 0] },
-        pill: { fontSize: 8.5, bold: true, margin: [0, 8, 0, 0] },
+        meta: { fontSize: 9.5, color: C.dim, margin: [0, 4, 0, 0] },
+        h2: { fontSize: 13, bold: true, margin: [0, 20, 0, 8] },
+        h3: { fontSize: 10.5, bold: true, margin: [0, 1, 0, 2] },
         label: { fontSize: 7.5, bold: true, color: C.dim, characterSpacing: 1, margin: [0, 7, 0, 2] },
         body: { fontSize: 10, lineHeight: 1.3 },
         empty: { fontSize: 10, color: C.faint },
@@ -1523,6 +1599,17 @@
       }
     };
   }
+
+  // ---------- скачивание ----------
+  function saveBlob(name, blob) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1500);
+  }
+  function download(name, content, type) { saveBlob(name, new Blob([BOM + content], { type: type })); }
+  function fileName(d, ext) { return 'Протокол_встречи_по_КП_' + fileDate(d.date) + ext; }
 
   $('#dl-pdf').addEventListener('click', function () {
     var btn = this, label = btn.textContent;
@@ -1532,33 +1619,35 @@
     var d = collect();
     ensurePdf().then(function (pm) {
       pm.createPdf(toPdf(d)).getBlob(function (blob) {
-        saveBlob('Итоги_встречи_по_КП_' + fileDate(d.date) + '.pdf', blob);
+        saveBlob(fileName(d, '.pdf'), blob);
         done();
       });
     }).catch(function (err) {
       pdfLoading = null;
       done();
       if (window.console) console.error(err);
-      window.alert('Не получилось собрать PDF. Проверьте интернет и попробуйте еще раз, а пока можно скачать итоги в Word или текстом.');
+      window.alert('Не получилось собрать PDF. Проверьте интернет и попробуйте еще раз, а пока можно скачать протокол в Word или текстом.');
     });
   });
-
   $('#dl-doc').addEventListener('click', function () {
     var d = collect();
-    download('Итоги_встречи_по_КП_' + fileDate(d.date) + '.doc', toDoc(d), 'application/msword');
+    download(fileName(d, '.doc'), toDoc(d), 'application/msword');
   });
   $('#dl-txt').addEventListener('click', function () {
     var d = collect();
-    download('Итоги_встречи_по_КП_' + fileDate(d.date) + '.txt', toText(d), 'text/plain;charset=utf-8');
+    download(fileName(d, '.txt'), toText(d), 'text/plain;charset=utf-8');
   });
   $('#reset').addEventListener('click', function () {
-    if (!window.confirm('Очистить все статусы и заметки? Это действие не отменить — сначала лучше скачать итоги.')) return;
+    if (!window.confirm('Очистить все статусы и заметки? Это действие не отменить — сначала лучше скачать протокол.')) return;
     try { localStorage.removeItem(KEY); } catch (e) {}
     saveEls().forEach(function (el) { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
     $$('textarea').forEach(grow);
     refresh();
   });
 
+  // ---------- старт ----------
+  $$('.notes .sec-label').forEach(function (l) { l.insertAdjacentHTML('beforeend', '<span class="to-proto">попадет в протокол</span>'); });
+  $('#m-date').placeholder = fmtDay(new Date());
   load();
   $$('textarea').forEach(grow);
   refresh();
