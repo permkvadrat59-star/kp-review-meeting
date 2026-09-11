@@ -235,7 +235,7 @@
   .proto .pv-text { font-size: 0.95rem; margin-bottom: 0.15rem; }
   .proto .pv-label { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; color: var(--text-dim); margin: 0.6rem 0 0.25rem; }
   .pv-muted { color: var(--text-dim); }
-  .pv-inf { margin-left: 0.4rem; font-family: var(--mono); font-size: 0.66rem; font-weight: 500; color: var(--amber-ink);
+  .pv-inf { margin-left: 0.15rem; font-family: var(--mono); font-size: 0.66rem; font-weight: 500; color: var(--amber-ink);
     background: var(--amber-bg); border-radius: 999px; padding: 0.08rem 0.45rem; white-space: nowrap; }
   .pv-warn { margin: 0.8rem 0 0; padding: 0.7rem 0.9rem; border: 1px dashed var(--amber-line); border-radius: 8px;
     background: var(--amber-bg); color: var(--amber-ink); font-size: 0.9rem; }
@@ -1289,7 +1289,7 @@
 
   function recHtml(b, forPage) {
     var h = '<div class="pv-rec r-' + b.eff + '"><p class="pv-bt">' + esc(blockName(b)) +
-      (forPage && !b.key ? '<span class="pv-inf">статус не отмечен</span>' : '') + '</p>';
+      (forPage && !b.key ? ' <span class="pv-inf">статус не отмечен</span>' : '') + '</p>';
     if (b.notes) h += ptext(b.notes);
     if (b.scenarios.length) {
       h += '<p class="pv-label">СЦЕНАРИИ АВТОМАТИЗАЦИИ</p><div class="pv-scroll"><table class="pv-table"><tr><th>Сценарий</th><th>Срок</th><th>Ответственный</th><th>Результат</th></tr>';
@@ -1331,7 +1331,7 @@
         h.push('<table class="pv-table"><tr><th>№</th><th>Блок</th><th>Статус</th></tr>');
         d.blocks.forEach(function (b) {
           h.push('<tr><td class="pv-muted">' + b.num + '</td><td>' + esc(b.title) + '</td><td class="s-' + b.eff + '">' + EFF[b.eff] +
-            (forPage && !b.key ? '<span class="pv-inf">не отмечен</span>' : '') + '</td></tr>');
+            (forPage && !b.key ? ' <span class="pv-inf">не отмечен</span>' : '') + '</td></tr>');
         });
         h.push('</table>');
       }
